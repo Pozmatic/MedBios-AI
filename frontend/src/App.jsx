@@ -49,7 +49,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-bg-primary">
-      <nav className="sticky top-0 z-50 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-xl">
+      <nav className="sticky top-0 z-50 border-b border-border-subtle bg-bg-primary/85 backdrop-blur-2xl backdrop-saturate-150">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
           {/* Logo */}
           <NavLink to="/" className="flex items-center gap-2.5 font-bold text-lg group">

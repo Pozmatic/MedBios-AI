@@ -88,38 +88,48 @@ function Dashboard() {
 
       {/* ─── Hero Banner ─── */}
       <div className="relative mb-8 rounded-2xl overflow-hidden border border-border-subtle slide-up">
-        <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/10 via-transparent to-accent-purple/10 pointer-events-none" />
-        <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-accent-blue/5 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-accent-purple/5 blur-3xl pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/[0.07] via-transparent to-accent-purple/[0.07] pointer-events-none" />
+        <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-accent-blue/[0.04] blur-[80px] pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-accent-purple/[0.04] blur-[80px] pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-blue/20 to-transparent" />
+        {/* Grid pattern */}
+        <div className="absolute inset-0 opacity-[0.015] pointer-events-none" style={{backgroundImage: 'radial-gradient(circle, rgba(56,189,248,0.8) 1px, transparent 1px)', backgroundSize: '24px 24px'}} />
+
         <div className="relative px-8 py-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div>
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-3">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-green opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-green" />
                 </span>
-                <span className="text-accent-green text-xs font-semibold uppercase tracking-widest">System Online</span>
+                <span className="text-accent-green text-[0.65rem] font-semibold uppercase tracking-[0.15em]">System Online</span>
               </div>
-              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-accent-blue via-white to-accent-purple bg-clip-text text-transparent">
-                Clinical Intelligence
+              <h1 className="text-3xl sm:text-4xl font-bold leading-tight">
+                <span className="med-gradient-text">Clinical Intelligence</span>
               </h1>
-              <p className="text-text-secondary mt-1 text-sm max-w-lg">
-                AI-powered medical report analysis with clinical reasoning, knowledge graph, and explainable insights
+              <p className="text-text-secondary mt-2 text-sm max-w-lg leading-relaxed">
+                AI-powered medical report analysis with explainable clinical reasoning, knowledge graphs, and personalized risk assessment
               </p>
             </div>
             <Link to="/upload">
-              <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-white font-semibold hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-accent-blue/20 whitespace-nowrap">
-                Upload New Report
+              <button className="group px-7 py-3.5 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-white font-semibold hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-accent-blue/15 whitespace-nowrap relative overflow-hidden">
+                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                <span className="relative flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                  </svg>
+                  Upload Report
+                </span>
               </button>
             </Link>
           </div>
 
-          {/* Mini pipeline bar */}
+          {/* Pipeline capabilities */}
           <div className="mt-6 flex flex-wrap gap-2">
             {['OCR Extraction', 'NLP Processing', 'Abnormal Detection', 'Clinical Reasoning', 'Risk Scoring', 'Knowledge Graph', 'PDF Export'].map((s, i) => (
-              <div key={i} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-accent-green/25 text-accent-green/90 text-xs">
-                <span className="w-1 h-1 rounded-full bg-accent-green" />{s}
+              <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-green/[0.05] border border-accent-green/15 text-accent-green/80 text-xs font-medium">
+                <span className="w-1 h-1 rounded-full bg-accent-green/60" />{s}
               </div>
             ))}
           </div>
@@ -129,14 +139,16 @@ function Dashboard() {
       {/* ─── Animated Stat Cards ─── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6 fade-in">
         {stats.map((stat, i) => (
-          <div key={i} className={`glass-card !p-4 border ${stat.border} hover:scale-[1.03] transition-transform cursor-default`}>
-            <svg className={`w-5 h-5 ${stat.color} mb-2 opacity-70`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d={stat.icon} />
-            </svg>
+          <div key={i} className={`med-card border ${stat.border} cursor-default`}>
+            <div className={`w-9 h-9 rounded-lg bg-current/[0.08] ${stat.color} flex items-center justify-center mb-3`}>
+              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d={stat.icon} />
+              </svg>
+            </div>
             <div className={`text-2xl font-bold tabular-nums ${stat.color}`}>
               <AnimatedNumber target={stat.value} suffix={stat.suffix} />
             </div>
-            <div className="text-[0.6rem] text-text-muted uppercase tracking-wider mt-1">{stat.label}</div>
+            <div className="text-[0.6rem] text-text-muted uppercase tracking-wider mt-1.5 font-medium">{stat.label}</div>
           </div>
         ))}
       </div>
