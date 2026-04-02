@@ -58,7 +58,7 @@ function Signup() {
     <div className="min-h-screen bg-bg-primary flex items-center justify-center px-4 py-8">
       {/* Background effects */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 rounded-full bg-accent-purple/[0.04] blur-[100px]" />
+        <div className="absolute top-1/4 -left-20 w-96 h-96 rounded-full bg-accent-green/[0.04] blur-[100px]" />
         <div className="absolute bottom-1/4 -right-20 w-96 h-96 rounded-full bg-accent-blue/[0.04] blur-[100px]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-accent-teal/[0.02] blur-[120px]" />
       </div>
@@ -66,13 +66,13 @@ function Signup() {
       <div className="relative w-full max-w-md page-enter">
         {/* Logo & Brand */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-purple/15 to-accent-blue/15 border border-accent-purple/15 mb-3">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-300/15 to-accent-green/15 border border-accent-green/15 mb-3">
             <svg className="w-7 h-7" viewBox="0 0 32 32" fill="none">
               <circle cx="16" cy="16" r="14" stroke="url(#lgs)" strokeWidth="2.5"/>
               <path d="M16 8v16M12 12h8M12 20h8" stroke="url(#lgs)" strokeWidth="2" strokeLinecap="round"/>
               <defs>
                 <linearGradient id="lgs" x1="0" y1="0" x2="32" y2="32">
-                  <stop stopColor="#a78bfa"/><stop offset="1" stopColor="#38bdf8"/>
+                  <stop stopColor="#6ee7b7"/><stop offset="1" stopColor="#10b981"/>
                 </linearGradient>
               </defs>
             </svg>
@@ -100,7 +100,7 @@ function Signup() {
                   value={form.name}
                   onChange={(e) => update('name', e.target.value)}
                   placeholder="Dr. John Smith"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-bg-elevated/50 border border-border-subtle text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-accent-blue/50 transition"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-accent-green/[0.04] border border-border-subtle text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-accent-green/50 transition"
                   autoFocus
                 />
               </div>
@@ -120,7 +120,7 @@ function Signup() {
                   value={form.email}
                   onChange={(e) => update('email', e.target.value)}
                   placeholder="doctor@hospital.com"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-bg-elevated/50 border border-border-subtle text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-accent-blue/50 transition"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-accent-green/[0.04] border border-border-subtle text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-accent-green/50 transition"
                 />
               </div>
             </div>
@@ -137,7 +137,7 @@ function Signup() {
                 <select
                   value={form.role}
                   onChange={(e) => update('role', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-border-subtle text-text-primary text-sm focus:outline-none focus:border-accent-purple transition appearance-none cursor-pointer"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-accent-green/5 border border-border-subtle text-text-primary text-sm focus:outline-none focus:border-accent-green transition appearance-none cursor-pointer"
                 >
                   {ROLES.map(r => <option key={r} value={r} className="bg-bg-card text-text-primary">{r}</option>)}
                 </select>
@@ -161,7 +161,7 @@ function Signup() {
                   value={form.password}
                   onChange={(e) => update('password', e.target.value)}
                   placeholder="Min. 6 characters"
-                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-bg-elevated/50 border border-border-subtle text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-accent-blue/50 transition"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-accent-green/[0.04] border border-border-subtle text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-accent-green/50 transition"
                 />
                 <button
                   type="button"
@@ -207,12 +207,12 @@ function Signup() {
                   value={form.confirm}
                   onChange={(e) => update('confirm', e.target.value)}
                   placeholder="Re-enter password"
-                  className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white/5 border text-text-primary placeholder-text-muted text-sm focus:outline-none transition ${
+                  className={`w-full pl-10 pr-10 py-3 rounded-xl bg-accent-green/5 border text-text-primary placeholder-text-muted text-sm focus:outline-none transition ${
                     form.confirm && form.confirm !== form.password
                       ? 'border-accent-red focus:border-accent-red'
                       : form.confirm && form.confirm === form.password
                         ? 'border-accent-green focus:border-accent-green'
-                        : 'border-border-subtle focus:border-accent-purple'
+                        : 'border-border-subtle focus:border-accent-green'
                   }`}
                 />
                 {form.confirm && (
@@ -245,7 +245,7 @@ function Signup() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-blue text-white font-semibold hover:opacity-90 active:scale-[0.99] transition-all shadow-lg shadow-accent-purple/20 disabled:opacity-50 text-sm"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-300 to-accent-green text-white font-semibold hover:opacity-90 active:scale-[0.99] transition-all shadow-lg shadow-accent-green/20 disabled:opacity-50 text-sm"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -261,7 +261,7 @@ function Signup() {
           {/* Sign in link */}
           <p className="text-center text-sm text-text-muted mt-5 pt-4 border-t border-border-subtle">
             Already have an account?{' '}
-            <Link to="/login" className="text-accent-blue font-semibold hover:text-accent-blue/80 transition">
+            <Link to="/login" className="text-accent-green font-semibold hover:text-accent-green/80 transition">
               Sign In
             </Link>
           </p>

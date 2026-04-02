@@ -6,7 +6,7 @@ const SEVERITY_STYLES = {
   critical: { bg: 'bg-accent-red/10', border: 'border-accent-red/40', text: 'text-accent-red', badge: 'bg-accent-red text-white', color: '#ef4444' },
   high: { bg: 'bg-accent-orange/10', border: 'border-accent-orange/40', text: 'text-accent-orange', badge: 'bg-accent-orange text-white', color: '#f97316' },
   moderate: { bg: 'bg-accent-yellow/10', border: 'border-accent-yellow/40', text: 'text-accent-yellow', badge: 'bg-accent-yellow text-black', color: '#eab308' },
-  low: { bg: 'bg-accent-blue/10', border: 'border-accent-blue/40', text: 'text-accent-blue', badge: 'bg-accent-blue text-white', color: '#0ea5e9' },
+  low: { bg: 'bg-accent-green/10', border: 'border-accent-green/40', text: 'text-accent-green', badge: 'bg-accent-green text-white', color: '#10b981' },
 };
 
 const QUICK_MEDS = [
@@ -102,13 +102,13 @@ function DrugInteractions() {
     <div className="max-w-4xl mx-auto px-6 py-8 page-enter">
       <div className="slide-up mb-8">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-blue/15 to-accent-purple/15 border border-accent-blue/20 flex items-center justify-center">
-            <svg className="w-5 h-5 text-accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-green/15 to-emerald-300/15 border border-accent-green/20 flex items-center justify-center">
+            <svg className="w-5 h-5 text-accent-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
             </svg>
           </div>
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-green to-emerald-300 bg-clip-text text-transparent">
               Drug Interaction Checker
             </h1>
             <p className="text-text-secondary text-sm mt-0.5">30 interaction pairs · 65+ medication aliases · Real-time analysis</p>
@@ -121,7 +121,7 @@ function DrugInteractions() {
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">Patient Medications</h3>
           {medications.length > 0 && (
-            <span className="text-xs px-2.5 py-1 rounded-full bg-accent-blue/15 text-accent-blue font-medium">
+            <span className="text-xs px-2.5 py-1 rounded-full bg-accent-green/15 text-accent-green font-medium">
               {medications.length} selected
             </span>
           )}
@@ -138,13 +138,13 @@ function DrugInteractions() {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addMed(inputValue)}
               placeholder="Type medication name..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-border-subtle text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-accent-blue transition"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-accent-green/5 border border-border-subtle text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-accent-green transition"
             />
           </div>
           <button
             onClick={() => addMed(inputValue)}
             disabled={!inputValue.trim()}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-40"
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-green to-emerald-300 text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-40"
           >
             + Add
           </button>
@@ -162,8 +162,8 @@ function DrugInteractions() {
                   disabled={isAdded}
                   className={`px-2.5 py-1 rounded-lg text-xs transition ${
                     isAdded
-                      ? 'bg-accent-blue/15 text-accent-blue border border-accent-blue/30 cursor-default'
-                      : 'border border-border-subtle text-text-muted hover:text-text-primary hover:border-text-muted hover:bg-white/5'
+                      ? 'bg-accent-green/15 text-accent-green border border-accent-green/30 cursor-default'
+                      : 'border border-border-subtle text-text-muted hover:text-text-primary hover:border-text-muted hover:bg-accent-green/5'
                   }`}
                 >
                   {isAdded ? '✓' : '+'} {med}
@@ -177,7 +177,7 @@ function DrugInteractions() {
           <div className="pt-3 border-t border-border-subtle">
             <div className="flex flex-wrap gap-2">
               {medications.map((med, i) => (
-                <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-blue/15 text-accent-blue text-sm border border-accent-blue/20 group hover:bg-accent-blue/25 transition">
+                <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent-green/15 text-accent-green text-sm border border-accent-green/20 group hover:bg-accent-green/25 transition">
                   <span className="w-1.5 h-1.5 rounded-full bg-accent-blue" />
                   {med}
                   <button onClick={() => removeMed(i)} className="text-accent-red/60 hover:text-accent-red text-xs ml-0.5 group-hover:text-accent-red transition">×</button>
@@ -198,7 +198,7 @@ function DrugInteractions() {
       <button
         onClick={handleCheck}
         disabled={loading || medications.length < 2}
-        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-white font-semibold hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed mb-6 flex items-center justify-center gap-2 shadow-lg shadow-accent-blue/15"
+        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-accent-green to-emerald-300 text-white font-semibold hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed mb-6 flex items-center justify-center gap-2 shadow-lg shadow-accent-green/15"
       >
         {loading ? (
           <>

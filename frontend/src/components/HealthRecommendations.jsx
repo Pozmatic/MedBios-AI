@@ -33,10 +33,10 @@ function HealthRecommendations({ recommendations = {} }) {
   return (
     <div className="space-y-4">
       {/* Summary Banner */}
-      <div className="glass-card border border-accent-blue/20 bg-gradient-to-r from-accent-blue/5 to-accent-purple/5">
+      <div className="glass-card border border-accent-green/20 bg-gradient-to-r from-accent-blue/5 to-accent-purple/5">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-accent-blue/15 flex items-center justify-center shrink-0">
-            <svg className="w-5 h-5 text-accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="w-10 h-10 rounded-xl bg-accent-green/15 flex items-center justify-center shrink-0">
+            <svg className="w-5 h-5 text-accent-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
           </div>
@@ -84,8 +84,8 @@ function HealthRecommendations({ recommendations = {} }) {
               <div className="mt-4 pt-4 border-t border-border-subtle space-y-4 fade-in">
                 {[
                   { key: 'diet', label: 'Diet & Nutrition', items: rec.diet, color: 'text-accent-green' },
-                  { key: 'exercise', label: 'Exercise', items: rec.exercise, color: 'text-accent-blue' },
-                  { key: 'supplements', label: 'Supplements', items: rec.supplements, color: 'text-accent-purple' },
+                  { key: 'exercise', label: 'Exercise', items: rec.exercise, color: 'text-accent-green' },
+                  { key: 'supplements', label: 'Supplements', items: rec.supplements, color: 'text-accent-green' },
                   { key: 'followup', label: 'Follow-up Tests', items: rec.followup, color: 'text-accent-orange' },
                 ].map(section => (
                   section.items?.length > 0 && (

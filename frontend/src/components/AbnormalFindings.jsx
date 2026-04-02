@@ -79,7 +79,7 @@ function AbnormalFindings({ labValues = [], compact = false }) {
                 key={s}
                 onClick={() => setSortBy(s)}
                 className={`px-2 py-1 text-[0.65rem] font-medium transition-colors ${
-                  sortBy === s ? 'bg-accent-blue/15 text-accent-blue' : 'text-text-muted hover:text-text-secondary'
+                  sortBy === s ? 'bg-accent-green/15 text-accent-green' : 'text-text-muted hover:text-text-secondary'
                 }`}
               >
                 {s === 'severity' ? 'Risk' : s === 'score' ? 'Score' : 'A-Z'}
@@ -88,7 +88,7 @@ function AbnormalFindings({ labValues = [], compact = false }) {
           </div>
           <button
             onClick={() => setShowAll(!showAll)}
-            className="text-xs text-accent-blue hover:text-accent-blue/80 transition px-2 py-1 rounded-lg border border-accent-blue/20"
+            className="text-xs text-accent-green hover:text-accent-green/80 transition px-2 py-1 rounded-lg border border-accent-green/20"
           >
             {showAll ? `Abnormal (${abnormalCount})` : `All (${labValues.length})`}
           </button>
@@ -131,7 +131,7 @@ function AbnormalFindings({ labValues = [], compact = false }) {
                   <td>
                     {sevScore > 0 ? (
                       <div className="flex items-center gap-2 min-w-[80px]">
-                        <div className="flex-1 h-1.5 rounded-full bg-white/5 overflow-hidden">
+                        <div className="flex-1 h-1.5 rounded-full bg-accent-green/5 overflow-hidden">
                           <div
                             className={`h-full rounded-full ${s.bar} transition-all duration-700`}
                             style={{ width: `${sevScore}%` }}
@@ -150,7 +150,7 @@ function AbnormalFindings({ labValues = [], compact = false }) {
                           {lab.reference_min} – {lab.reference_max}
                         </div>
                         {barPos !== null && (
-                          <div className="relative h-1 rounded-full bg-white/5 mt-1">
+                          <div className="relative h-1 rounded-full bg-accent-green/5 mt-1">
                             <div className="absolute inset-y-0 left-0 right-0 rounded-full bg-accent-green/20" />
                             <div
                               className={`absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full ${s.dot} ring-2 ring-bg-primary`}

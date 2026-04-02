@@ -16,7 +16,7 @@ const ICONS = {
     </svg>
   ),
   info: (
-    <svg className="w-5 h-5 text-accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+    <svg className="w-5 h-5 text-accent-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
   ),
@@ -30,7 +30,7 @@ const ICONS = {
 const BORDER_COLORS = {
   success: 'border-accent-green/30',
   error: 'border-accent-red/30',
-  info: 'border-accent-blue/30',
+  info: 'border-accent-green/30',
   warning: 'border-accent-orange/30',
 };
 
@@ -58,7 +58,7 @@ export function ToastProvider({ children }) {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`flex items-start gap-3 px-4 py-3 rounded-xl bg-bg-card/95 border ${BORDER_COLORS[toast.type]} backdrop-blur-xl shadow-2xl shadow-black/40 animate-[slideIn_0.3s_ease] min-w-[280px]`}
+            className={`flex items-start gap-3 px-4 py-3 rounded-xl bg-white/95 border ${BORDER_COLORS[toast.type]} backdrop-blur-xl shadow-2xl shadow-black/40 animate-[slideIn_0.3s_ease] min-w-[280px]`}
           >
             <span className="shrink-0 mt-0.5">{ICONS[toast.type]}</span>
             <p className="text-sm text-text-primary flex-1">{toast.message}</p>

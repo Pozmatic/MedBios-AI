@@ -28,7 +28,7 @@ function Login() {
         {/* Layered background */}
         <div className="absolute inset-0 bg-gradient-to-br from-bg-secondary via-bg-primary to-bg-secondary" />
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-accent-blue/[0.06] blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-accent-purple/[0.05] blur-[100px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-accent-green/[0.05] blur-[100px]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-accent-teal/[0.03] blur-[80px]" />
 
         {/* Grid pattern overlay */}
@@ -39,18 +39,18 @@ function Login() {
         <div className="relative z-10 flex flex-col justify-center px-16 max-w-xl">
           {/* Logo */}
           <div className="flex items-center gap-3 mb-10">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-blue/20 to-accent-purple/20 border border-accent-blue/20 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-green/20 to-emerald-300/20 border border-accent-green/20 flex items-center justify-center">
               <svg className="w-6 h-6" viewBox="0 0 32 32" fill="none">
                 <circle cx="16" cy="16" r="14" stroke="url(#lg)" strokeWidth="2.5"/>
                 <path d="M16 8v16M12 12h8M12 20h8" stroke="url(#lg)" strokeWidth="2" strokeLinecap="round"/>
                 <defs>
                   <linearGradient id="lg" x1="0" y1="0" x2="32" y2="32">
-                    <stop stopColor="#38bdf8"/><stop offset="1" stopColor="#a78bfa"/>
+                    <stop stopColor="#10b981"/><stop offset="1" stopColor="#6ee7b7"/>
                   </linearGradient>
                 </defs>
               </svg>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-accent-green to-emerald-300 bg-clip-text text-transparent">
               MedBios AI
             </span>
           </div>
@@ -73,8 +73,8 @@ function Login() {
             ].map((feat, i) => (
               <div key={i} className="med-card !p-3.5 group">
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-accent-blue/10 flex items-center justify-center shrink-0 group-hover:bg-accent-blue/15 transition">
-                    <svg className="w-4.5 h-4.5 text-accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <div className="w-9 h-9 rounded-lg bg-accent-green/10 flex items-center justify-center shrink-0 group-hover:bg-accent-green/15 transition">
+                    <svg className="w-4.5 h-4.5 text-accent-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d={feat.icon} />
                     </svg>
                   </div>
@@ -90,7 +90,7 @@ function Login() {
           {/* Trust indicator */}
           <div className="mt-10 flex items-center gap-3">
             <div className="flex -space-x-2">
-              {['#38bdf8', '#a78bfa', '#34d399', '#fb923c'].map((color, i) => (
+              {['#10b981', '#6ee7b7', '#34d399', '#fb923c'].map((color, i) => (
                 <div key={i} className="w-8 h-8 rounded-full border-2 border-bg-primary flex items-center justify-center text-xs font-bold text-white" style={{ background: color }}>
                   {['Dr', 'RN', 'MD', 'PA'][i]}
                 </div>
@@ -105,25 +105,25 @@ function Login() {
       <div className="flex-1 flex items-center justify-center px-6 py-12 relative">
         {/* Background effects */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden lg:hidden">
-          <div className="absolute top-1/4 -left-20 w-96 h-96 rounded-full bg-accent-blue/5 blur-[100px]" />
-          <div className="absolute bottom-1/4 -right-20 w-96 h-96 rounded-full bg-accent-purple/5 blur-[100px]" />
+          <div className="absolute top-1/4 -left-20 w-96 h-96 rounded-full bg-accent-green/5 blur-[100px]" />
+          <div className="absolute bottom-1/4 -right-20 w-96 h-96 rounded-full bg-accent-green/5 blur-[100px]" />
         </div>
 
         <div className="relative w-full max-w-md page-enter">
           {/* Mobile logo */}
           <div className="text-center mb-8 lg:hidden">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-blue/15 to-accent-purple/15 border border-accent-blue/20 mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-green/15 to-emerald-300/15 border border-accent-green/20 mb-4">
               <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
                 <circle cx="16" cy="16" r="14" stroke="url(#lgm)" strokeWidth="2.5"/>
                 <path d="M16 8v16M12 12h8M12 20h8" stroke="url(#lgm)" strokeWidth="2" strokeLinecap="round"/>
                 <defs>
                   <linearGradient id="lgm" x1="0" y1="0" x2="32" y2="32">
-                    <stop stopColor="#38bdf8"/><stop offset="1" stopColor="#a78bfa"/>
+                    <stop stopColor="#10b981"/><stop offset="1" stopColor="#6ee7b7"/>
                   </linearGradient>
                 </defs>
               </svg>
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-accent-blue via-white to-accent-purple bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-accent-green via-white to-emerald-300 bg-clip-text text-transparent">
               MedBios AI
             </h1>
             <p className="text-text-muted text-sm mt-1">Clinical Intelligence Platform</p>
@@ -150,7 +150,7 @@ function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="doctor@hospital.com"
-                    className="w-full pl-11 pr-4 py-3 rounded-xl bg-bg-elevated/50 border border-border-subtle text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-accent-blue/50 transition"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl bg-accent-green/[0.04] border border-border-subtle text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-accent-green/50 transition"
                     autoFocus
                   />
                 </div>
@@ -161,7 +161,7 @@ function Login() {
                   <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
                     Password
                   </label>
-                  <button type="button" className="text-[0.65rem] text-accent-blue hover:text-accent-blue/80 transition">
+                  <button type="button" className="text-[0.65rem] text-accent-green hover:text-accent-green/80 transition">
                     Forgot password?
                   </button>
                 </div>
@@ -176,7 +176,7 @@ function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
-                    className="w-full pl-11 pr-4 py-3 rounded-xl bg-bg-elevated/50 border border-border-subtle text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-accent-blue/50 transition"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl bg-accent-green/[0.04] border border-border-subtle text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-accent-green/50 transition"
                   />
                 </div>
               </div>
@@ -193,9 +193,9 @@ function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-white font-semibold hover:opacity-90 active:scale-[0.99] transition-all shadow-lg shadow-accent-blue/15 disabled:opacity-50 text-sm relative overflow-hidden group"
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-accent-green to-emerald-300 text-white font-semibold hover:opacity-90 active:scale-[0.99] transition-all shadow-lg shadow-accent-green/15 disabled:opacity-50 text-sm relative overflow-hidden group"
               >
-                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -210,7 +210,7 @@ function Login() {
             {/* Sign up link */}
             <p className="text-center text-sm text-text-muted mt-6 pt-5 border-t border-border-subtle">
               New to MedBios AI?{' '}
-              <Link to="/signup" className="text-accent-blue font-semibold hover:text-accent-blue/80 transition">
+              <Link to="/signup" className="text-accent-green font-semibold hover:text-accent-green/80 transition">
                 Create Account
               </Link>
             </p>

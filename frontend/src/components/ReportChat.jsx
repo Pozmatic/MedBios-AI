@@ -63,7 +63,7 @@ function ReportChat({ reportId }) {
       <div className="flex items-center justify-between mb-4 pb-3 border-b border-border-subtle">
         <div className="flex items-center gap-2.5">
           <div className="relative">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent-green to-emerald-300 flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
@@ -85,10 +85,10 @@ function ReportChat({ reportId }) {
             <div className="max-w-[85%]">
               <div className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                 msg.role === 'user'
-                  ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white rounded-br-sm'
+                  ? 'bg-gradient-to-r from-accent-green to-emerald-300 text-white rounded-br-sm'
                   : msg.error
                     ? 'bg-accent-red/10 border border-accent-red/20 text-accent-red rounded-bl-sm'
-                    : 'bg-white/5 border border-border-subtle text-text-secondary rounded-bl-sm'
+                    : 'bg-accent-green/5 border border-border-subtle text-text-secondary rounded-bl-sm'
               }`}>
                 {msg.text}
               </div>
@@ -102,7 +102,7 @@ function ReportChat({ reportId }) {
         {/* Typing indicator */}
         {loading && (
           <div className="flex justify-start fade-in">
-            <div className="rounded-2xl rounded-bl-sm px-4 py-3 bg-white/5 border border-border-subtle flex gap-1 items-center">
+            <div className="rounded-2xl rounded-bl-sm px-4 py-3 bg-accent-green/5 border border-border-subtle flex gap-1 items-center">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-blue animate-bounce" style={{ animationDelay: '0ms' }} />
               <span className="w-1.5 h-1.5 rounded-full bg-accent-blue animate-bounce" style={{ animationDelay: '150ms' }} />
               <span className="w-1.5 h-1.5 rounded-full bg-accent-blue animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -118,7 +118,7 @@ function ReportChat({ reportId }) {
             <button
               key={i}
               onClick={() => handleSend(q)}
-              className="px-2.5 py-1 rounded-full text-[0.65rem] border border-accent-blue/25 text-accent-blue hover:bg-accent-blue/10 transition"
+              className="px-2.5 py-1 rounded-full text-[0.65rem] border border-accent-green/25 text-accent-green hover:bg-accent-green/10 transition"
             >
               {q}
             </button>
@@ -134,12 +134,12 @@ function ReportChat({ reportId }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask about your results..."
-          className="w-full bg-bg-primary/50 border border-border-subtle rounded-xl pl-4 pr-12 py-3 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-blue transition-colors"
+          className="w-full bg-bg-primary/50 border border-border-subtle rounded-xl pl-4 pr-12 py-3 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-green transition-colors"
         />
         <button
           type="submit"
           disabled={!input.trim() || loading}
-          className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-accent-blue/15 flex items-center justify-center text-accent-blue hover:bg-accent-blue/25 disabled:opacity-30 disabled:hover:bg-accent-blue/15 transition"
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-accent-green/15 flex items-center justify-center text-accent-green hover:bg-accent-green/25 disabled:opacity-30 disabled:hover:bg-accent-green/15 transition"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

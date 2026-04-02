@@ -21,11 +21,11 @@ function KnowledgeGraphViz({ graphData, graphRisks = [] }) {
   }
 
   const nodeColors = {
-    lab_test: '#0ea5e9',
+    lab_test: '#10b981',
     disease: '#ef4444',
     symptom: '#f97316',
     medication: '#22c55e',
-    organ: '#8b5cf6',
+    organ: '#34d399',
   };
 
   const fgData = {

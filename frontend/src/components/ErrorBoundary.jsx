@@ -37,12 +37,12 @@ class ErrorBoundary extends Component {
             <div className="flex gap-3 justify-center">
               <button
                 onClick={() => this.setState({ hasError: false, error: null })}
-                className="px-5 py-2 rounded-xl bg-accent-blue/15 text-accent-blue text-sm font-medium hover:bg-accent-blue/25 transition"
+                className="px-5 py-2 rounded-xl bg-accent-green/15 text-accent-green text-sm font-medium hover:bg-accent-green/25 transition"
               >
                 Try Again
               </button>
               <Link to="/">
-                <button className="px-5 py-2 rounded-xl border border-border-subtle text-text-secondary text-sm font-medium hover:bg-white/5 transition">
+                <button className="px-5 py-2 rounded-xl border border-border-subtle text-text-secondary text-sm font-medium hover:bg-accent-green/5 transition">
                   Go to Dashboard
                 </button>
               </Link>
