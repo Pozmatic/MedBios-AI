@@ -22,8 +22,8 @@ export const uploadReport = async (file, onProgress) => {
   return response.data;
 };
 
-export const listReports = async () => {
-  const response = await api.get('/reports/');
+export const listReports = async (page = 1, pageSize = 20) => {
+  const response = await api.get(`/reports/?page=${page}&page_size=${pageSize}`);
   return response.data;
 };
 

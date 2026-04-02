@@ -43,16 +43,23 @@ function Dashboard() {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalReportCount, setTotalReportCount] = useState(0);
+  const PAGE_SIZE = 10;
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => { loadData(); }, [page]);
 
   const loadData = async () => {
     try {
+      setLoading(true);
       const [reportData, analyticsData] = await Promise.all([
-        listReports(),
+        listReports(page, PAGE_SIZE),
         getAnalytics().catch(() => null),
       ]);
-      setReports(reportData);
+      setReports(reportData.items || reportData);
+      setTotalPages(reportData.total_pages || 1);
+      setTotalReportCount(reportData.total || (reportData.items || reportData).length);
       setAnalytics(analyticsData);
     } catch {
       setError('Could not connect to backend.');
@@ -64,7 +71,7 @@ function Dashboard() {
   const a = analytics || {};
   const catBreakdown = a.category_breakdown || {};
   const maxCatCount = Math.max(...Object.values(catBreakdown), 1);
-  const totalReports = a.total_reports ?? reports.length;
+  const totalReports = a.total_reports ?? totalReportCount;
   const avgRisk = a.avg_risk_score ?? 0;
 
   const stats = [
@@ -236,7 +243,7 @@ function Dashboard() {
       <div className="glass-card fade-in">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Recent Reports</h3>
-          {reports.length > 0 && <span className="text-xs text-text-muted">{reports.length} total</span>}
+          {totalReportCount > 0 && <span className="text-xs text-text-muted">{totalReportCount} total</span>}
         </div>
 
         {loading ? (
@@ -261,6 +268,7 @@ function Dashboard() {
             </Link>
           </div>
         ) : (
+          <>
           <table className="data-table">
             <thead>
               <tr>
@@ -308,6 +316,49 @@ function Dashboard() {
               ))}
             </tbody>
           </table>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-border-subtle">
+              <span className="text-xs text-text-muted">
+                Page {page} of {totalPages}
+              </span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                  className="px-3 py-1.5 rounded-lg text-xs border border-border-subtle text-text-secondary hover:bg-white/5 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                  const start = Math.max(1, Math.min(page - 2, totalPages - 4));
+                  const p = start + i;
+                  return p <= totalPages ? (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={`w-8 h-8 rounded-lg text-xs font-medium transition ${
+                        p === page
+                          ? 'bg-accent-blue text-white'
+                          : 'border border-border-subtle text-text-secondary hover:bg-white/5'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ) : null;
+                })}
+                <button
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page >= totalPages}
+                  className="px-3 py-1.5 rounded-lg text-xs border border-border-subtle text-text-secondary hover:bg-white/5 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+          </>
         )}
       </div>
     </div>

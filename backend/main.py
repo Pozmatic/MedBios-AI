@@ -56,20 +56,33 @@ async def health():
     import platform
     import sys
     from services.knowledge_graph import get_full_graph_stats
+    from services.reasoning_engine import _load_custom_rules, ALL_RULES
     kg = get_full_graph_stats()
+    custom_rules = _load_custom_rules()
+    total_rules = len(ALL_RULES) + len(custom_rules)
+    db_status = "connected"
+    try:
+        from database import async_engine
+        async with async_engine.connect() as conn:
+            await conn.execute(__import__("sqlalchemy").text("SELECT 1"))
+    except Exception:
+        db_status = "unavailable"
     return {
         "status": "healthy",
         "version": APP_VERSION,
         "python": sys.version.split()[0],
         "platform": platform.system(),
+        "database": db_status,
+        "custom_rules_loaded": len(custom_rules),
         "services": {
-            "ocr": "active",
-            "nlp": "active",
-            "reasoning_engine": "active (13 rules)",
-            "risk_scorer": "active",
+            "ocr": "active (pdfplumber + tesseract fallback)",
+            "nlp": "active (100+ lab test aliases)",
+            "reasoning_engine": f"active ({len(ALL_RULES)} built-in + {len(custom_rules)} custom rules)",
+            "risk_scorer": "active (age/gender-aware)",
             "knowledge_graph": f"active ({kg.get('total_nodes', 0)} nodes, {kg.get('total_edges', 0)} edges)",
-            "drug_interactions": "active (16 pairs, 8 classes)",
+            "drug_interactions": "active (25+ pairs, 65+ aliases)",
             "trend_analysis": "active",
             "pdf_export": "active",
+            "chat": "active (context-aware)",
         },
     }

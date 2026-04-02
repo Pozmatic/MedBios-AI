@@ -309,21 +309,19 @@ async def patient_trends(patient_id: str, db: AsyncSession = Depends(get_db)):
 
 # ── Drug Interaction Detection ──────────────────────────────
 
+from schemas import DrugInteractionRequest, DrugLabInteractionRequest
+
 @router.post("/drug-interactions/check")
-async def check_drug_interactions(payload: dict):
+async def check_drug_interactions(payload: DrugInteractionRequest):
     """
     Check for drug-drug interactions.
     Body: { "medications": ["warfarin", "aspirin", "metformin"] }
     """
-    medications = payload.get("medications", [])
-    if not medications:
-        raise HTTPException(status_code=400, detail="Please provide a list of medications")
-
-    return run_full_interaction_check(medications)
+    return run_full_interaction_check(payload.medications)
 
 
 @router.post("/drug-interactions/lab-check")
-async def check_drug_lab_interactions(payload: dict):
+async def check_drug_lab_interactions(payload: DrugLabInteractionRequest):
     """
     Check for drug-lab interactions with patient's current lab values.
     Body: {
@@ -331,13 +329,7 @@ async def check_drug_lab_interactions(payload: dict):
         "lab_values": [{"test_name": "potassium", "value": 5.4, "status": "high"}]
     }
     """
-    medications = payload.get("medications", [])
-    lab_values = payload.get("lab_values", [])
-
-    if not medications:
-        raise HTTPException(status_code=400, detail="Please provide a list of medications")
-
-    return run_full_interaction_check(medications, lab_values)
+    return run_full_interaction_check(payload.medications, payload.lab_values)
 
 
 # ── Analytics Dashboard ─────────────────────────────────────
@@ -581,10 +573,7 @@ async def export_report_pdf(report_id: str, db: AsyncSession = Depends(get_db)):
     )
 
 import asyncio
-from pydantic import BaseModel
-
-class ChatMessage(BaseModel):
-    message: str
+from schemas import ChatMessage
 
 @router.post("/{report_id}/chat")
 async def chat_with_report(report_id: str, payload: ChatMessage, db: AsyncSession = Depends(get_db)):
