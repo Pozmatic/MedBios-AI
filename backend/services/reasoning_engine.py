@@ -2,11 +2,120 @@
 MedBios AI — Clinical Reasoning Engine
 Rule-based inference engine for clinical interpretation of lab values.
 Generates clinical insights with probabilistic confidence scoring.
+Supports both hardcoded Python rules and dynamic JSON-based rules.
 """
+import json
 import logging
+from pathlib import Path
 from typing import Optional
 
 logger = logging.getLogger(__name__)
+
+# Path for external JSON rules
+_CUSTOM_RULES_PATH = Path(__file__).parent.parent / "data" / "custom_rules.json"
+_custom_rules_cache: list[dict] | None = None
+
+
+def _load_custom_rules() -> list[dict]:
+    """Load custom rules from JSON file. Cached after first load."""
+    global _custom_rules_cache
+    if _custom_rules_cache is not None:
+        return _custom_rules_cache
+    if _CUSTOM_RULES_PATH.exists():
+        try:
+            with open(_CUSTOM_RULES_PATH) as f:
+                _custom_rules_cache = json.load(f)
+                logger.info(f"Loaded {len(_custom_rules_cache)} custom rules from {_CUSTOM_RULES_PATH}")
+                return _custom_rules_cache
+        except Exception as e:
+            logger.error(f"Failed to load custom rules: {e}")
+    _custom_rules_cache = []
+    return _custom_rules_cache
+
+
+def reload_custom_rules():
+    """Force reload of custom rules from disk (useful after editing the JSON file)."""
+    global _custom_rules_cache
+    _custom_rules_cache = None
+    return _load_custom_rules()
+
+
+def _evaluate_json_rule(rule: dict, labs: dict) -> Optional[dict]:
+    """
+    Evaluate a single JSON-defined rule against the lab lookup.
+
+    JSON rule format:
+    {
+        "name": "Hypothyroidism Screening",
+        "conditions": [
+            {"test": "tsh", "operator": ">", "value": 4.5}
+        ],
+        "optional_conditions": [
+            {"test": "free_t4", "operator": "<", "value": 0.8}
+        ],
+        "condition_label": "Possible Hypothyroidism",
+        "category": "Endocrinology",
+        "base_confidence": "medium",
+        "upgraded_confidence": "high",
+        "reasoning": "Elevated TSH suggests underactive thyroid.",
+        "recommendation": "Full thyroid panel including Free T4, Free T3, anti-TPO antibodies"
+    }
+    """
+    conditions = rule.get("conditions", [])
+    if not conditions:
+        return None
+
+    evidence = []
+    all_required_met = True
+
+    for cond in conditions:
+        test_name = cond["test"].lower()
+        val = _get_val(labs, test_name)
+        if val is None:
+            all_required_met = False
+            break
+        if not _compare(val, cond["operator"], cond["value"]):
+            all_required_met = False
+            break
+        evidence.append({
+            "test": test_name.replace("_", " ").title(),
+            "value": val,
+            "finding": f"{cond['operator']} {cond['value']}",
+        })
+
+    if not all_required_met:
+        return None
+
+    confidence = rule.get("base_confidence", "low")
+
+    # Check optional conditions for confidence upgrade
+    for opt in rule.get("optional_conditions", []):
+        test_name = opt["test"].lower()
+        val = _get_val(labs, test_name)
+        if val is not None and _compare(val, opt["operator"], opt["value"]):
+            evidence.append({
+                "test": test_name.replace("_", " ").title(),
+                "value": val,
+                "finding": f"{opt['operator']} {opt['value']}",
+            })
+            confidence = rule.get("upgraded_confidence", confidence)
+
+    return {
+        "condition": rule["condition_label"],
+        "confidence": confidence,
+        "category": rule.get("category", "General"),
+        "evidence": evidence,
+        "reasoning": rule.get("reasoning", ""),
+        "recommendation": rule.get("recommendation", ""),
+    }
+
+
+def _compare(val: float, operator: str, threshold: float) -> bool:
+    """Evaluate a comparison operator."""
+    ops = {">": val > threshold, "<": val < threshold,
+           ">=": val >= threshold, "<=": val <= threshold,
+           "==": val == threshold, "!=": val != threshold}
+    return ops.get(operator, False)
 
 
 # ── Clinical Rules ─────────────────────────────────────────────────────────
@@ -14,7 +123,7 @@ logger = logging.getLogger(__name__)
 def run_reasoning(lab_values: list[dict]) -> list[dict]:
     """
     Run all clinical reasoning rules against extracted lab values.
-    
+
     Input:  lab_values with 'canonical_name', 'value', 'status' fields
     Output: List of clinical insights with condition, confidence, evidence, etc.
     """
@@ -26,7 +135,7 @@ def run_reasoning(lab_values: list[dict]) -> list[dict]:
 
     insights = []
 
-    # Run each rule
+    # Run hardcoded Python rules
     for rule_fn in ALL_RULES:
         try:
             result = rule_fn(labs)
@@ -37,6 +146,15 @@ def run_reasoning(lab_values: list[dict]) -> list[dict]:
                     insights.append(result)
         except Exception as e:
             logger.error(f"Rule {rule_fn.__name__} failed: {e}")
+
+    # Run dynamic JSON rules
+    for rule in _load_custom_rules():
+        try:
+            result = _evaluate_json_rule(rule, labs)
+            if result:
+                insights.append(result)
+        except Exception as e:
+            logger.error(f"Custom rule '{rule.get('name', 'unknown')}' failed: {e}")
 
     # Sort by confidence priority
     confidence_order = {"high": 0, "medium": 1, "low": 2}

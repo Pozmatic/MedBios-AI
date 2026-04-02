@@ -2,8 +2,10 @@
 MedBios AI — Multimodal Pipeline Orchestrator
 Orchestrates the full analysis pipeline: OCR → NLP → Abnormal Detection → Reasoning → Knowledge Graph → Report
 """
+import asyncio
 import logging
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 from services.ocr_service import extract_text_from_pdf
 from services.nlp_service import extract_lab_values, classify_document_type, extract_patient_info
@@ -17,10 +19,19 @@ from services.knowledge_graph import infer_downstream_risks, get_subgraph
 logger = logging.getLogger(__name__)
 
 
+_executor = ThreadPoolExecutor(max_workers=2)
+
+
+async def run_full_pipeline_async(file_bytes: bytes, filename: str = "report.pdf") -> dict:
+    """Async wrapper that runs the CPU-bound pipeline in a thread pool."""
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(_executor, run_full_pipeline, file_bytes, filename)
+
+
 def run_full_pipeline(file_bytes: bytes, filename: str = "report.pdf") -> dict:
     """
     Run the complete MedBios analysis pipeline on a medical document.
-    
+
     Pipeline stages:
     1. OCR — extract text from PDF
     2. NLP — extract lab values and classify document
@@ -30,7 +41,7 @@ def run_full_pipeline(file_bytes: bytes, filename: str = "report.pdf") -> dict:
     6. Knowledge Graph — infer downstream risks
     7. Explainability — build evidence chains
     8. Report Generation — produce clinical summary
-    
+
     Returns: Complete analysis result dict
     """
     start_time = time.time()
@@ -76,7 +87,7 @@ def run_full_pipeline(file_bytes: bytes, filename: str = "report.pdf") -> dict:
 
     # ── Stage 5: Risk Scoring ──
     log_stage("Risk Scoring", "Computing organ system risk scores")
-    risk_scores = compute_risk_scores(lab_values, insights)
+    risk_scores = compute_risk_scores(lab_values, insights, patient_info=patient_info)
     log_stage("Risk Scoring", f"Overall risk: {risk_scores.get('overall', 0)}% ({risk_scores.get('overall_level', 'minimal')})")
 
     # ── Stage 6: Knowledge Graph ──

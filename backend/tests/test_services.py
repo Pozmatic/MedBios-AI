@@ -379,5 +379,219 @@ class TestExplainability:
         assert len(chains) > 0
 
 
+# ═══════════════════════════════════════════════════════════════
+# Risk Scorer — Patient Context Tests
+# ═══════════════════════════════════════════════════════════════
+
+class TestRiskScorerPatientContext:
+    """Test that patient demographics affect risk scoring."""
+
+    def _base_inputs(self):
+        insights = [
+            {"condition": "High LDL", "category": "Cardiovascular", "confidence": "high",
+             "evidence": [], "reasoning": "test", "recommendation": "test"},
+        ]
+        lab_values = [
+            {"canonical_name": "ldl", "value": 172, "status": "high"},
+        ]
+        return lab_values, insights
+
+    def test_elderly_male_higher_cardiovascular_risk(self):
+        lab_values, insights = self._base_inputs()
+        scores_no_ctx = compute_risk_scores(lab_values, insights)
+        scores_elderly = compute_risk_scores(lab_values, insights, patient_info={"age": 70, "gender": "male"})
+        assert scores_elderly["organ_systems"]["cardiovascular"]["score"] > scores_no_ctx["organ_systems"]["cardiovascular"]["score"]
+
+    def test_young_patient_no_boost(self):
+        lab_values, insights = self._base_inputs()
+        scores_base = compute_risk_scores(lab_values, insights)
+        scores_young = compute_risk_scores(lab_values, insights, patient_info={"age": 25, "gender": "male"})
+        # Young male gets 1.1x cardiovascular from gender but no age boost
+        assert scores_young["organ_systems"]["cardiovascular"]["score"] >= scores_base["organ_systems"]["cardiovascular"]["score"]
+
+    def test_no_patient_info_same_as_none(self):
+        lab_values, insights = self._base_inputs()
+        scores_none = compute_risk_scores(lab_values, insights, patient_info=None)
+        scores_empty = compute_risk_scores(lab_values, insights, patient_info={})
+        assert scores_none == scores_empty
+
+
+# ═══════════════════════════════════════════════════════════════
+# Dynamic JSON Rule Engine Tests
+# ═══════════════════════════════════════════════════════════════
+
+from services.reasoning_engine import _evaluate_json_rule, _compare
+
+class TestDynamicRules:
+    def test_compare_operators(self):
+        assert _compare(10, ">", 5) is True
+        assert _compare(10, "<", 5) is False
+        assert _compare(10, ">=", 10) is True
+        assert _compare(10, "<=", 10) is True
+        assert _compare(10, "==", 10) is True
+        assert _compare(10, "!=", 10) is False
+
+    def test_json_rule_matches(self):
+        rule = {
+            "name": "Test Rule",
+            "conditions": [{"test": "tsh", "operator": ">", "value": 4.5}],
+            "optional_conditions": [],
+            "condition_label": "High TSH",
+            "category": "Endocrinology",
+            "base_confidence": "medium",
+            "reasoning": "Elevated TSH",
+            "recommendation": "Check thyroid",
+        }
+        labs = {"tsh": {"canonical_name": "tsh", "value": 6.0, "status": "high"}}
+        result = _evaluate_json_rule(rule, labs)
+        assert result is not None
+        assert result["condition"] == "High TSH"
+        assert result["confidence"] == "medium"
+
+    def test_json_rule_no_match(self):
+        rule = {
+            "name": "Test Rule",
+            "conditions": [{"test": "tsh", "operator": ">", "value": 4.5}],
+            "optional_conditions": [],
+            "condition_label": "High TSH",
+            "category": "Endocrinology",
+            "base_confidence": "medium",
+            "reasoning": "Elevated TSH",
+            "recommendation": "Check thyroid",
+        }
+        labs = {"tsh": {"canonical_name": "tsh", "value": 2.0, "status": "normal"}}
+        result = _evaluate_json_rule(rule, labs)
+        assert result is None
+
+    def test_json_rule_optional_upgrades_confidence(self):
+        rule = {
+            "name": "Test Rule",
+            "conditions": [{"test": "tsh", "operator": ">", "value": 4.5}],
+            "optional_conditions": [{"test": "free_t4", "operator": "<", "value": 0.8}],
+            "condition_label": "Hypothyroidism",
+            "category": "Endocrinology",
+            "base_confidence": "medium",
+            "upgraded_confidence": "high",
+            "reasoning": "Elevated TSH with low T4",
+            "recommendation": "Full thyroid panel",
+        }
+        labs = {
+            "tsh": {"canonical_name": "tsh", "value": 6.0, "status": "high"},
+            "free_t4": {"canonical_name": "free_t4", "value": 0.5, "status": "low"},
+        }
+        result = _evaluate_json_rule(rule, labs)
+        assert result is not None
+        assert result["confidence"] == "high"
+
+    def test_json_rule_missing_required_test(self):
+        rule = {
+            "name": "Test Rule",
+            "conditions": [{"test": "tsh", "operator": ">", "value": 4.5}],
+            "optional_conditions": [],
+            "condition_label": "High TSH",
+            "category": "Endocrinology",
+            "base_confidence": "medium",
+            "reasoning": "test",
+            "recommendation": "test",
+        }
+        labs = {"glucose": {"canonical_name": "glucose", "value": 90, "status": "normal"}}
+        result = _evaluate_json_rule(rule, labs)
+        assert result is None
+
+
+# ═══════════════════════════════════════════════════════════════
+# Pipeline Integration Tests
+# ═══════════════════════════════════════════════════════════════
+
+class TestPipelineIntegration:
+    """Integration tests that run multiple services together."""
+
+    def test_full_reasoning_to_risk_pipeline(self):
+        """Test that reasoning output feeds correctly into risk scoring."""
+        lab_values = [
+            {"canonical_name": "hemoglobin", "value": 8.9, "status": "low"},
+            {"canonical_name": "ferritin", "value": 8.5, "status": "low"},
+            {"canonical_name": "mcv", "value": 72.5, "status": "low"},
+            {"canonical_name": "ldl", "value": 185, "status": "high"},
+            {"canonical_name": "hdl", "value": 32, "status": "low"},
+            {"canonical_name": "creatinine", "value": 2.1, "status": "high"},
+            {"canonical_name": "egfr", "value": 35, "status": "low"},
+        ]
+        # Run reasoning
+        insights = run_reasoning(lab_values)
+        assert len(insights) > 0
+
+        # Feed into risk scorer with patient context
+        scores = compute_risk_scores(lab_values, insights, patient_info={"age": 65, "gender": "male"})
+        assert scores["overall"] > 0
+        assert "hematological" in scores["organ_systems"]
+        assert "cardiovascular" in scores["organ_systems"]
+        assert "renal" in scores["organ_systems"]
+
+        # Verify risk levels are sensible
+        hema_score = scores["organ_systems"]["hematological"]["score"]
+        assert hema_score > 30, "Multiple hematological abnormalities should produce significant risk"
+
+    def test_nlp_to_reasoning_pipeline(self):
+        """Test NLP extraction feeds into reasoning correctly."""
+        text = """
+        COMPLETE BLOOD COUNT
+        Hemoglobin    8.5 g/dL       13.0 - 17.0
+        Ferritin      12 ng/mL       20 - 250
+        MCV           74 fL          80 - 100
+        Glucose       210 mg/dL      70 - 100
+        HbA1c         8.1 %          4.0 - 5.6
+        """
+        from services.nlp_service import extract_lab_values
+        from services.reference_ranges import detect_abnormals
+
+        lab_values = extract_lab_values(text)
+        assert len(lab_values) >= 3
+
+        lab_values = detect_abnormals(lab_values)
+        abnormal = [lv for lv in lab_values if lv.get("status") != "normal"]
+        assert len(abnormal) >= 1
+
+        insights = run_reasoning(lab_values)
+        conditions = [i["condition"].lower() for i in insights]
+        # Should detect at least one clinical condition
+        assert len(insights) >= 1
+
+    def test_evidence_chain_integration(self):
+        """Test that evidence chains build from reasoning output."""
+        lab_values = [
+            {"canonical_name": "hemoglobin", "value": 8.9, "status": "low"},
+            {"canonical_name": "ferritin", "value": 8.5, "status": "low"},
+        ]
+        insights = run_reasoning(lab_values)
+        assert len(insights) > 0
+
+        chains = build_evidence_chains(insights, lab_values, "Hemoglobin 8.9 Ferritin 8.5")
+        assert len(chains) > 0
+
+    def test_report_generation_integration(self):
+        """Test full report generation from lab values."""
+        lab_values = [
+            {"canonical_name": "glucose", "value": 180, "status": "high"},
+            {"canonical_name": "hba1c", "value": 7.5, "status": "high"},
+        ]
+        from services.reference_ranges import detect_abnormals
+        lab_values = detect_abnormals(lab_values)
+        insights = run_reasoning(lab_values)
+        risk_scores = compute_risk_scores(lab_values, insights)
+
+        analysis = {
+            "lab_values": lab_values,
+            "insights": insights,
+            "risk_scores": risk_scores,
+            "patient_info": {"name": "Test Patient", "age": 55, "gender": "Male"},
+            "document_type": "lab_report",
+            "differential_diagnosis": [],
+        }
+        report = generate_clinical_summary(analysis)
+        assert isinstance(report, dict)
+        assert "summary" in report or "abnormal_findings" in report
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])

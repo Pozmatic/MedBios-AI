@@ -4,14 +4,14 @@ Handles report upload, analysis, and retrieval.
 """
 import logging
 import io
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
 from database import get_db
 from models import Patient, Report, LabResult, ClinicalInsight
-from services.pipeline import run_full_pipeline
+from services.pipeline import run_full_pipeline_async
 from services.knowledge_graph import get_full_graph_stats, get_subgraph, query_related
 from services.trend_analysis import get_patient_trends
 from services.drug_interactions import run_full_interaction_check
@@ -52,7 +52,7 @@ async def upload_report(
 
     # Run analysis pipeline
     try:
-        result = run_full_pipeline(file_bytes, filename=file.filename)
+        result = await run_full_pipeline_async(file_bytes, filename=file.filename)
     except Exception as e:
         logger.error(f"Pipeline failed: {e}")
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
@@ -128,22 +128,37 @@ async def upload_report(
 
 
 @router.get("/")
-async def list_reports(db: AsyncSession = Depends(get_db)):
-    """List all analyzed reports."""
-    query = select(Report).order_by(Report.created_at.desc())
+async def list_reports(
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+    db: AsyncSession = Depends(get_db),
+):
+    """List all analyzed reports with pagination."""
+    # Get total count
+    total = (await db.execute(select(func.count(Report.id)))).scalar() or 0
+
+    # Paginated query
+    offset = (page - 1) * page_size
+    query = select(Report).order_by(Report.created_at.desc()).offset(offset).limit(page_size)
     results = await db.execute(query)
     reports = results.scalars().all()
 
-    return [
-        {
-            "id": r.id,
-            "filename": r.filename,
-            "document_type": r.document_type,
-            "status": r.status,
-            "created_at": r.created_at.isoformat() if r.created_at else None,
-        }
-        for r in reports
-    ]
+    return {
+        "items": [
+            {
+                "id": r.id,
+                "filename": r.filename,
+                "document_type": r.document_type,
+                "status": r.status,
+                "created_at": r.created_at.isoformat() if r.created_at else None,
+            }
+            for r in reports
+        ],
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "total_pages": (total + page_size - 1) // page_size,
+    }
 
 
 @router.get("/{report_id}")
@@ -371,13 +386,13 @@ async def analytics_dashboard(db: AsyncSession = Depends(get_db)):
         for r in recent
     ]
 
-    # Average risk score (from analysis_result JSON)
+    # Average risk score — only fetch analysis_result column, paginate to avoid memory issues
     risk_scores = []
-    all_reports_q = select(Report).where(Report.analysis_result.isnot(None))
-    all_reports = (await db.execute(all_reports_q)).scalars().all()
-    for r in all_reports:
-        if r.analysis_result and isinstance(r.analysis_result, dict):
-            summary = r.analysis_result.get("summary", {})
+    risk_q = select(Report.analysis_result).where(Report.analysis_result.isnot(None)).limit(500)
+    risk_rows = (await db.execute(risk_q)).all()
+    for (analysis_result,) in risk_rows:
+        if analysis_result and isinstance(analysis_result, dict):
+            summary = analysis_result.get("summary", {})
             risk = summary.get("overall_risk", 0)
             if risk:
                 risk_scores.append(risk)
@@ -573,40 +588,142 @@ class ChatMessage(BaseModel):
 
 @router.post("/{report_id}/chat")
 async def chat_with_report(report_id: str, payload: ChatMessage, db: AsyncSession = Depends(get_db)):
-    """Simulate a context-aware AI chat response based on the report."""
+    """Context-aware AI chat that uses actual report data to answer questions."""
     report_result = await db.execute(select(Report).where(Report.id == report_id))
     report = report_result.scalars().first()
     if not report:
         raise HTTPException(status_code=404, detail="Report not found")
-    
-    msg = payload.message.lower()
-    
-    # Generic fallback
-    answer = ("I'm your MedBios AI assistant. I've analyzed your report. "
-              "Based on the findings, it's recommended to consult your physician for a detailed diagnosis.")
-    
-    # Simple keyword-based contextual reasoning
-    if "glucose" in msg or "sugar" in msg or "diabetes" in msg:
-        answer = ("Your report indicates abnormal glucose levels. High fasting glucose is a key indicator "
-                  "of impaired glucose tolerance. I recommend discussing dietary changes and potentially "
-                  "an HbA1c test with your doctor.")
-    elif "diet" in msg or "food" in msg or "eat" in msg:
-        answer = ("Given your clinical profile, a heart-healthy diet low in refined carbohydrates and "
-                  "saturated fats is generally recommended. Please refer to the specific recommendations in the 'Report' tab.")
-    elif "risk" in msg or "danger" in msg or "bad" in msg:
-        overall_risk = report.risk_scores.get('overall', 'unknown') if report.risk_scores else 'unknown'
-        answer = (f"Your overall calculated risk score is {overall_risk}%. High-risk areas are highlighted "
-                  "in red on your Organ System map. Identifying risks early is the best way to prevent complications.")
-    elif "cholesterol" in msg or "lipid" in msg or "heart" in msg:
-        answer = ("Lipid profile results (like LDL cholesterol) are part of your cardiovascular risk assessment. "
-                  "If LDL is high, cardiovascular risk increases. Regular exercise is often a first line of defense.")
-    elif "hello" in msg or "hi" in msg:
-        answer = "Hello! How can I help you understand your medical report today?"
 
-    # Simulate reasoning/LLM generation delay
-    await asyncio.sleep(1.5)
-    
+    # Fetch actual lab values and insights for this report
+    lab_results = (await db.execute(
+        select(LabResult).where(LabResult.report_id == report_id)
+    )).scalars().all()
+    insights = (await db.execute(
+        select(ClinicalInsight).where(ClinicalInsight.report_id == report_id)
+    )).scalars().all()
+
+    msg = payload.message.lower()
+    clinical_report = report.analysis_result or {}
+
+    # Build context from actual data
+    abnormal_labs = [lr for lr in lab_results if lr.status != "normal"]
+    abnormal_names = {lr.test_name.lower() for lr in abnormal_labs}
+    insight_conditions = [ins.condition for ins in insights]
+    risk_scores = clinical_report.get("risk_scores", {})
+
+    answer = _build_chat_response(msg, abnormal_labs, insights, risk_scores, insight_conditions)
+
     return {"answer": answer}
+
+
+def _build_chat_response(msg, abnormal_labs, insights, risk_scores, conditions):
+    """Build a context-aware response using actual report data."""
+
+    # Greetings
+    if any(w in msg for w in ("hello", "hi ", "hey", "greetings")):
+        abnormal_count = len(abnormal_labs)
+        if abnormal_count:
+            return (f"Hello! I've analyzed your report and found {abnormal_count} abnormal value(s). "
+                    "Feel free to ask about any specific test, condition, or recommendation.")
+        return "Hello! Your report looks good overall. Ask me about any specific test or concern."
+
+    # Check if user is asking about a specific lab test
+    for lab in abnormal_labs:
+        test_lower = lab.test_name.lower()
+        if test_lower in msg or test_lower.replace("_", " ") in msg:
+            status_desc = {"high": "above", "low": "below", "critical_high": "critically above",
+                           "critical_low": "critically below"}.get(lab.status, lab.status)
+            ref_range = f"{lab.reference_min}-{lab.reference_max}" if lab.reference_min else "standard range"
+            answer = (f"Your {lab.test_name.replace('_', ' ').title()} is {lab.value} {lab.unit or ''}, "
+                      f"which is {status_desc} the reference range ({ref_range}).")
+            # Attach related insights
+            related = [ins for ins in insights
+                       if lab.test_name.lower() in (ins.reasoning or "").lower()
+                       or lab.test_name.lower() in (ins.condition or "").lower()]
+            if related:
+                answer += f" This is associated with: {related[0].condition}. {related[0].reasoning}"
+            return answer
+
+    # Topic-based responses using actual data
+    if any(w in msg for w in ("glucose", "sugar", "diabetes", "hba1c", "a1c")):
+        relevant = [ins for ins in insights if "diabet" in (ins.condition or "").lower()
+                     or "glucose" in (ins.condition or "").lower()]
+        if relevant:
+            ins = relevant[0]
+            return f"{ins.condition} ({ins.confidence} confidence): {ins.reasoning} Recommendation: {ins.recommendation}"
+        return "No glucose-related abnormalities were detected in your report."
+
+    if any(w in msg for w in ("cholesterol", "lipid", "heart", "cardiovascular", "ldl", "hdl")):
+        relevant = [ins for ins in insights if ins.category == "Cardiovascular"]
+        if relevant:
+            parts = [f"- {ins.condition} ({ins.confidence}): {ins.reasoning}" for ins in relevant]
+            return "Cardiovascular findings:\n" + "\n".join(parts)
+        cv_risk = risk_scores.get("cardiovascular", {})
+        if cv_risk:
+            return f"Your cardiovascular risk score is {cv_risk.get('score', 'N/A')}% ({cv_risk.get('level', 'N/A')})."
+        return "No significant cardiovascular concerns were found in your report."
+
+    if any(w in msg for w in ("kidney", "renal", "creatinine", "egfr")):
+        relevant = [ins for ins in insights if ins.category == "Nephrology"
+                     or "kidney" in (ins.condition or "").lower()]
+        if relevant:
+            ins = relevant[0]
+            return f"{ins.condition}: {ins.reasoning} Recommendation: {ins.recommendation}"
+        return "No kidney-related abnormalities were detected in your report."
+
+    if any(w in msg for w in ("risk", "danger", "score", "overall")):
+        overall = risk_scores.get("overall", 0) if isinstance(risk_scores, dict) else 0
+        high_systems = [
+            f"{sys}: {data.get('score', 0)}% ({data.get('level', 'N/A')})"
+            for sys, data in (risk_scores if isinstance(risk_scores, dict) else {}).items()
+            if isinstance(data, dict) and data.get("score", 0) >= 40
+        ]
+        answer = f"Your overall risk score is {overall}%."
+        if high_systems:
+            answer += " Elevated risk areas: " + "; ".join(high_systems) + "."
+        return answer
+
+    if any(w in msg for w in ("abnormal", "problem", "wrong", "issue", "concern")):
+        if abnormal_labs:
+            items = [f"- {lr.test_name.replace('_', ' ').title()}: {lr.value} ({lr.status})"
+                     for lr in abnormal_labs[:8]]
+            return "Abnormal findings in your report:\n" + "\n".join(items)
+        return "No abnormal values were found in your report."
+
+    if any(w in msg for w in ("diet", "food", "eat", "nutrition", "exercise")):
+        nutrition_insights = [ins for ins in insights
+                              if ins.category in ("Nutrition", "Endocrinology")]
+        if nutrition_insights:
+            recs = [ins.recommendation for ins in nutrition_insights if ins.recommendation]
+            if recs:
+                return "Based on your results, here are relevant recommendations:\n" + "\n".join(f"- {r}" for r in recs)
+        return ("Based on your clinical profile, a balanced diet and regular exercise are recommended. "
+                "Check the Recommendations tab for personalized guidance.")
+
+    if any(w in msg for w in ("summary", "overview", "explain", "report")):
+        summary = clinical_report_summary(conditions, abnormal_labs, risk_scores)
+        return summary
+
+    # Fallback with actual context
+    if conditions:
+        return (f"Your report identified {len(conditions)} clinical finding(s): "
+                f"{', '.join(conditions[:3])}. "
+                "Ask about any specific condition, lab test, or recommendation for more details.")
+    return ("I'm your MedBios AI assistant. Your report has been analyzed. "
+            "Ask about specific tests, conditions, risk scores, or recommendations.")
+
+
+def clinical_report_summary(conditions, abnormal_labs, risk_scores):
+    """Generate a text summary from report data."""
+    parts = [f"Your report summary: {len(abnormal_labs)} abnormal value(s) detected."]
+    if conditions:
+        parts.append(f"Clinical findings: {', '.join(conditions[:5])}.")
+    if isinstance(risk_scores, dict):
+        overall = risk_scores.get("overall", 0)
+        if overall:
+            parts.append(f"Overall risk score: {overall}%.")
+    parts.append("Consult your physician for personalized medical advice.")
+    return " ".join(parts)
 
 
 # ── Health Recommendations ──
