@@ -94,8 +94,8 @@ function UploadReport() {
     <div className="max-w-3xl mx-auto px-6 py-8 page-enter">
       <div className="slide-up mb-8">
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-blue/15 to-accent-purple/15 border border-accent-blue/15 flex items-center justify-center">
-            <svg className="w-5 h-5 text-accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-green/15 to-emerald-300/15 border border-accent-green/15 flex items-center justify-center">
+            <svg className="w-5 h-5 text-accent-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
             </svg>
           </div>
@@ -114,7 +114,7 @@ function UploadReport() {
           <div
             className={`glass-card border-2 border-dashed text-center cursor-pointer transition-all duration-300 ${
               dragOver
-                ? 'border-accent-blue bg-accent-blue/5 scale-[1.01]'
+                ? 'border-accent-green bg-accent-green/5 scale-[1.01]'
                 : file
                   ? 'border-accent-green/40 bg-accent-green/5'
                   : 'border-border-subtle hover:border-text-muted'
@@ -127,8 +127,8 @@ function UploadReport() {
           >
             {!file ? (
               <>
-                <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-accent-blue/10 to-accent-purple/10 border border-accent-blue/10 flex items-center justify-center float-anim">
-                  <svg className="w-10 h-10 text-accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-accent-green/10 to-emerald-300/10 border border-accent-green/10 flex items-center justify-center float-anim">
+                  <svg className="w-10 h-10 text-accent-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                   </svg>
                 </div>
@@ -136,7 +136,7 @@ function UploadReport() {
                 <p className="text-text-muted text-sm mb-4">PDF format supported — up to 50MB</p>
                 <div className="flex flex-wrap justify-center gap-2">
                   {['Blood Work', 'Metabolic Panel', 'CBC', 'Lipid Profile', 'Thyroid', 'Kidney Function'].map((t, i) => (
-                    <span key={i} className="px-3 py-1 rounded-full bg-bg-elevated/50 border border-border-subtle text-text-muted text-xs font-medium">{t}</span>
+                    <span key={i} className="px-3 py-1 rounded-full bg-accent-green/[0.04] border border-border-subtle text-text-muted text-xs font-medium">{t}</span>
                   ))}
                 </div>
               </>
@@ -182,7 +182,7 @@ function UploadReport() {
           {file && (
             <button
               onClick={handleUpload}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-white font-semibold hover:opacity-90 active:scale-[0.99] transition-all shadow-lg shadow-accent-blue/20 text-base"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-accent-green to-emerald-300 text-white font-semibold hover:opacity-90 active:scale-[0.99] transition-all shadow-lg shadow-accent-green/20 text-base"
             >
               Analyze Report with AI
             </button>
@@ -208,13 +208,13 @@ function UploadReport() {
         <div className="glass-card fade-in">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">Analysis Pipeline</h3>
-            <span className="text-xs font-bold text-accent-blue tabular-nums">{overallProgress}%</span>
+            <span className="text-xs font-bold text-accent-green tabular-nums">{overallProgress}%</span>
           </div>
 
           {/* Overall progress bar */}
-          <div className="h-2 rounded-full bg-white/5 overflow-hidden mb-6">
+          <div className="h-2 rounded-full bg-accent-green/5 overflow-hidden mb-6">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-accent-blue to-accent-purple transition-all duration-500 relative"
+              className="h-full rounded-full bg-gradient-to-r from-accent-green to-emerald-300 transition-all duration-500 relative"
               style={{ width: `${overallProgress}%` }}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
@@ -230,13 +230,13 @@ function UploadReport() {
                 <div
                   key={i}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
-                    done ? 'bg-accent-green/5' : active ? 'bg-accent-blue/5' : ''
+                    done ? 'bg-accent-green/5' : active ? 'bg-accent-green/5' : ''
                   }`}
                 >
                   <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                     done ? 'bg-accent-green text-white'
-                    : active ? 'bg-accent-blue text-white'
-                    : 'bg-white/5 text-text-muted'
+                    : active ? 'bg-accent-green text-white'
+                    : 'bg-accent-green/5 text-text-muted'
                   }`}>
                     {done ? (
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -250,7 +250,7 @@ function UploadReport() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <span className={`text-sm font-medium ${
-                      done ? 'text-accent-green' : active ? 'text-accent-blue' : 'text-text-muted'
+                      done ? 'text-accent-green' : active ? 'text-accent-green' : 'text-text-muted'
                     }`}>
                       {stage.label}
                     </span>

@@ -39,7 +39,7 @@ function TrendAnalysis() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="glass-card text-center py-12">
           <p className="text-accent-orange mb-2">{error || 'No trend data available'}</p>
-          <Link to="/" className="text-accent-blue text-sm hover:underline">Back to Dashboard</Link>
+          <Link to="/" className="text-accent-green text-sm hover:underline">Back to Dashboard</Link>
         </div>
       </div>
     );
@@ -53,7 +53,7 @@ function TrendAnalysis() {
 
   const directionColors = {
     increasing: 'text-accent-red',
-    decreasing: 'text-accent-blue',
+    decreasing: 'text-accent-green',
     stable: 'text-accent-green',
     fluctuating: 'text-accent-orange',
   };
@@ -62,7 +62,7 @@ function TrendAnalysis() {
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="slide-up mb-6">
         <Link to="/" className="text-text-muted text-sm hover:text-text-secondary transition">← Dashboard</Link>
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent mt-2">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-green to-emerald-300 bg-clip-text text-transparent mt-2">
           Trend Analysis
         </h1>
         <p className="text-text-secondary mt-1">Longitudinal tracking for Patient {patientId}</p>
@@ -96,8 +96,8 @@ function TrendAnalysis() {
             key={tab.id}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filter === tab.id
-                ? 'bg-gradient-to-r from-accent-blue to-accent-purple text-white'
-                : 'border border-border-subtle text-text-secondary hover:bg-white/5'
+                ? 'bg-gradient-to-r from-accent-green to-emerald-300 text-white'
+                : 'border border-border-subtle text-text-secondary hover:bg-accent-green/5'
             }`}
             onClick={() => setFilter(tab.id)}
           >
@@ -130,7 +130,7 @@ function TrendAnalysis() {
                   <Area
                     type="monotone"
                     dataKey="value"
-                    stroke={trend.alert ? '#ef4444' : '#0ea5e9'}
+                    stroke={trend.alert ? '#ef4444' : '#10b981'}
                     fill={trend.alert ? 'rgba(239,68,68,0.1)' : 'rgba(14,165,233,0.1)'}
                     strokeWidth={2}
                   />

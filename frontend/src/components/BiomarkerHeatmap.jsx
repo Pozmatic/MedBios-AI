@@ -43,7 +43,7 @@ function BiomarkerHeatmap({ labValues = [] }) {
               key={s}
               onClick={() => setSortBy(s)}
               className={`px-2.5 py-1 rounded text-xs transition-colors ${
-                sortBy === s ? 'bg-accent-blue/20 text-accent-blue' : 'text-text-muted hover:text-text-secondary'
+                sortBy === s ? 'bg-accent-green/20 text-accent-green' : 'text-text-muted hover:text-text-secondary'
               }`}
             >
               {s === 'severity' ? 'By Risk' : 'A-Z'}

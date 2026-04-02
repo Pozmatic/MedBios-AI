@@ -70,10 +70,10 @@ function CriticalAlerts({ labValues = [], insights = [] }) {
 
       {/* High-confidence clinical concerns */}
       {highRisk.slice(0, 3).map((insight, i) => (
-        <div key={`i-${i}`} className="flex items-start gap-3 px-4 py-3 rounded-xl border border-accent-purple/40 bg-accent-purple/10">
-          <span className="mt-0.5 w-2 h-2 rounded-full shrink-0 bg-accent-purple ring-4 ring-purple-400/20" />
+        <div key={`i-${i}`} className="flex items-start gap-3 px-4 py-3 rounded-xl border border-accent-green/40 bg-accent-green/10">
+          <span className="mt-0.5 w-2 h-2 rounded-full shrink-0 bg-accent-green ring-4 ring-purple-400/20" />
           <div className="flex-1 min-w-0">
-            <span className="text-xs font-bold uppercase tracking-wider text-accent-purple">CLINICAL CONCERN</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-accent-green">CLINICAL CONCERN</span>
             <p className="text-sm text-text-primary mt-0.5">
               <strong>{insight.condition}</strong> — {insight.reasoning || 'High-confidence finding detected'}
             </p>

@@ -9,8 +9,8 @@ const THEMES = [
 ];
 
 const ACCENT_COLORS = [
-  { id: 'blue', label: 'Ocean', color: '#0ea5e9' },
-  { id: 'purple', label: 'Violet', color: '#8b5cf6' },
+  { id: 'blue', label: 'Ocean', color: '#10b981' },
+  { id: 'purple', label: 'Violet', color: '#34d399' },
   { id: 'green', label: 'Emerald', color: '#22c55e' },
   { id: 'cyan', label: 'Cyan', color: '#06b6d4' },
   { id: 'pink', label: 'Rose', color: '#ec4899' },
@@ -51,7 +51,7 @@ function Settings() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-8 page-enter">
       <div className="slide-up mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-blue via-white to-accent-purple bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-green via-white to-emerald-300 bg-clip-text text-transparent">
           Settings
         </h1>
         <p className="text-text-secondary text-sm mt-0.5">Manage your account, preferences, and platform settings</p>
@@ -67,8 +67,8 @@ function Settings() {
                 onClick={() => setActiveSection(s.id)}
                 className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
                   activeSection === s.id
-                    ? 'bg-accent-blue/15 text-accent-blue'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
+                    ? 'bg-accent-green/15 text-accent-green'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-accent-green/5'
                 }`}
               >
                 <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -87,36 +87,36 @@ function Settings() {
               <div className="glass-card">
                 <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-4">Profile Information</h3>
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-accent-blue/20">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-green to-emerald-300 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-accent-green/20">
                     {initials}
                   </div>
                   <div>
                     <h4 className="text-lg font-bold text-text-primary">{user?.name || 'User'}</h4>
                     <p className="text-text-muted text-sm">{user?.email || 'user@email.com'}</p>
-                    <span className="text-[0.6rem] px-2 py-0.5 rounded-full bg-accent-blue/15 text-accent-blue font-medium mt-1 inline-block">{user?.role || 'Physician'}</span>
+                    <span className="text-[0.6rem] px-2 py-0.5 rounded-full bg-accent-green/15 text-accent-green font-medium mt-1 inline-block">{user?.role || 'Physician'}</span>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-1.5">Full Name</label>
-                    <input type="text" defaultValue={user?.name} className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-border-subtle text-text-primary text-sm focus:outline-none focus:border-accent-blue transition" />
+                    <input type="text" defaultValue={user?.name} className="w-full px-4 py-2.5 rounded-xl bg-accent-green/5 border border-border-subtle text-text-primary text-sm focus:outline-none focus:border-accent-green transition" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-1.5">Email</label>
-                    <input type="email" defaultValue={user?.email} className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-border-subtle text-text-primary text-sm focus:outline-none focus:border-accent-blue transition" />
+                    <input type="email" defaultValue={user?.email} className="w-full px-4 py-2.5 rounded-xl bg-accent-green/5 border border-border-subtle text-text-primary text-sm focus:outline-none focus:border-accent-green transition" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-1.5">Role</label>
-                    <input type="text" defaultValue={user?.role} className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-border-subtle text-text-primary text-sm focus:outline-none focus:border-accent-blue transition" readOnly />
+                    <input type="text" defaultValue={user?.role} className="w-full px-4 py-2.5 rounded-xl bg-accent-green/5 border border-border-subtle text-text-primary text-sm focus:outline-none focus:border-accent-green transition" readOnly />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-text-muted uppercase tracking-wider mb-1.5">Member Since</label>
-                    <input type="text" defaultValue={new Date(user?.registeredAt || user?.loginTime).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-border-subtle text-text-muted text-sm" readOnly />
+                    <input type="text" defaultValue={new Date(user?.registeredAt || user?.loginTime).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} className="w-full px-4 py-2.5 rounded-xl bg-accent-green/5 border border-border-subtle text-text-muted text-sm" readOnly />
                   </div>
                 </div>
                 <button
                   onClick={() => addToast('Profile saved!', 'success')}
-                  className="mt-4 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-blue to-accent-purple text-white text-sm font-medium hover:opacity-90 transition"
+                  className="mt-4 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent-green to-emerald-300 text-white text-sm font-medium hover:opacity-90 transition"
                 >
                   Save Changes
                 </button>
@@ -147,7 +147,7 @@ function Settings() {
                     <button
                       key={t.id}
                       onClick={() => { setSelectedTheme(t.id); addToast(`Theme: ${t.label}`, 'info'); }}
-                      className={`p-3 rounded-xl border transition ${selectedTheme === t.id ? 'border-accent-blue bg-accent-blue/10' : 'border-border-subtle hover:border-text-muted'}`}
+                      className={`p-3 rounded-xl border transition ${selectedTheme === t.id ? 'border-accent-green bg-accent-green/10' : 'border-border-subtle hover:border-text-muted'}`}
                     >
                       <div className={`w-full h-16 rounded-lg ${t.preview} mb-2 ring-1 ring-white/5`} />
                       <span className="text-xs text-text-secondary font-medium">{t.label}</span>
@@ -162,7 +162,7 @@ function Settings() {
                     <button
                       key={c.id}
                       onClick={() => { setSelectedAccent(c.id); addToast(`Accent: ${c.label}`, 'info'); }}
-                      className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl border transition ${selectedAccent === c.id ? 'border-white/20 bg-white/5' : 'border-transparent hover:bg-white/[0.02]'}`}
+                      className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl border transition ${selectedAccent === c.id ? 'border-white/20 bg-accent-green/5' : 'border-transparent hover:bg-accent-green/[0.03]'}`}
                     >
                       <div className="w-8 h-8 rounded-full ring-2 ring-offset-2 ring-offset-bg-primary transition" style={{ background: c.color, ringColor: selectedAccent === c.id ? c.color : 'transparent' }} />
                       <span className="text-[0.6rem] text-text-muted">{c.label}</span>
@@ -183,7 +183,7 @@ function Settings() {
                   { key: 'drugAlerts', label: 'Drug Interaction Alerts', desc: 'Alerts for dangerous drug combinations', important: true },
                   { key: 'weeklyDigest', label: 'Weekly Digest', desc: 'Summary of all reports analyzed this week' },
                 ].map(n => (
-                  <div key={n.key} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.02] border border-border-subtle">
+                  <div key={n.key} className="flex items-center justify-between px-4 py-3 rounded-xl bg-accent-green/[0.03] border border-border-subtle">
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-text-primary font-medium">{n.label}</span>
@@ -208,11 +208,11 @@ function Settings() {
               <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-4">Keyboard Shortcuts</h3>
               <div className="space-y-2">
                 {shortcuts.map((s, i) => (
-                  <div key={i} className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.02] border border-border-subtle">
+                  <div key={i} className="flex items-center justify-between px-4 py-3 rounded-xl bg-accent-green/[0.03] border border-border-subtle">
                     <span className="text-sm text-text-primary">{s.action}</span>
                     <div className="flex gap-1">
                       {s.keys.map((k, j) => (
-                        <kbd key={j} className="px-2.5 py-1 rounded-lg bg-white/5 border border-border-subtle text-text-secondary text-xs font-mono shadow-sm">{k}</kbd>
+                        <kbd key={j} className="px-2.5 py-1 rounded-lg bg-accent-green/5 border border-border-subtle text-text-secondary text-xs font-mono shadow-sm">{k}</kbd>
                       ))}
                     </div>
                   </div>
@@ -224,14 +224,14 @@ function Settings() {
           {activeSection === 'about' && (
             <div className="space-y-6 fade-in">
               <div className="glass-card text-center py-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-blue/15 to-accent-purple/15 border border-accent-blue/20 mb-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-green/15 to-emerald-300/15 border border-accent-green/20 mb-4">
                   <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none">
                     <circle cx="16" cy="16" r="14" stroke="url(#agrad)" strokeWidth="2.5"/>
                     <path d="M16 8v16M12 12h8M12 20h8" stroke="url(#agrad)" strokeWidth="2" strokeLinecap="round"/>
-                    <defs><linearGradient id="agrad" x1="0" y1="0" x2="32" y2="32"><stop stopColor="#0ea5e9"/><stop offset="1" stopColor="#8b5cf6"/></linearGradient></defs>
+                    <defs><linearGradient id="agrad" x1="0" y1="0" x2="32" y2="32"><stop stopColor="#10b981"/><stop offset="1" stopColor="#34d399"/></linearGradient></defs>
                   </svg>
                 </div>
-                <h2 className="text-xl font-bold bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">MedBios AI</h2>
+                <h2 className="text-xl font-bold bg-gradient-to-r from-accent-green to-emerald-300 bg-clip-text text-transparent">MedBios AI</h2>
                 <p className="text-text-muted text-sm mt-1">Clinical Report Intelligence Platform</p>
                 <p className="text-text-muted text-xs mt-0.5">Version 2.0.0 · Built for Humanity</p>
               </div>
@@ -239,12 +239,12 @@ function Settings() {
                 <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-3">Platform Stats</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
-                    { val: '100+', label: 'Lab Tests', color: 'text-accent-blue' },
+                    { val: '100+', label: 'Lab Tests', color: 'text-accent-green' },
                     { val: '20', label: 'Clinical Rules', color: 'text-accent-green' },
                     { val: '30', label: 'Drug Pairs', color: 'text-accent-orange' },
-                    { val: '65+', label: 'Drug Aliases', color: 'text-accent-purple' },
+                    { val: '65+', label: 'Drug Aliases', color: 'text-accent-green' },
                   ].map((s, i) => (
-                    <div key={i} className="text-center px-3 py-3 rounded-xl bg-white/[0.02] border border-border-subtle">
+                    <div key={i} className="text-center px-3 py-3 rounded-xl bg-accent-green/[0.03] border border-border-subtle">
                       <div className={`text-lg font-bold ${s.color}`}>{s.val}</div>
                       <div className="text-[0.55rem] text-text-muted uppercase tracking-wider">{s.label}</div>
                     </div>
@@ -255,7 +255,7 @@ function Settings() {
                 <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-3">Tech Stack</h3>
                 <div className="flex flex-wrap gap-2">
                   {['React 19', 'Vite', 'Tailwind v4', 'FastAPI', 'SQLAlchemy', 'PyMuPDF', 'Tesseract OCR', 'Recharts', 'ReportLab'].map(t => (
-                    <span key={t} className="px-3 py-1.5 rounded-lg bg-white/[0.03] border border-border-subtle text-text-muted text-xs">{t}</span>
+                    <span key={t} className="px-3 py-1.5 rounded-lg bg-accent-green/[0.03] border border-border-subtle text-text-muted text-xs">{t}</span>
                   ))}
                 </div>
               </div>

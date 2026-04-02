@@ -3,7 +3,7 @@ import { useState } from 'react';
 const CONF_STYLES = {
   high:   { badge: 'bg-accent-red/15 text-accent-red', dot: 'bg-accent-red', icon: '▲' },
   medium: { badge: 'bg-accent-orange/15 text-accent-orange', dot: 'bg-accent-orange', icon: '●' },
-  low:    { badge: 'bg-accent-blue/15 text-accent-blue', dot: 'bg-accent-blue', icon: '○' },
+  low:    { badge: 'bg-accent-green/15 text-accent-green', dot: 'bg-accent-blue', icon: '○' },
 };
 
 const CAT_ICONS = {
@@ -25,7 +25,7 @@ function ClinicalInsights({ insights = [], evidenceChains = [], graphRisks = [],
     <div className="glass-card">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <svg className="w-4 h-4 text-accent-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="w-4 h-4 text-accent-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
           </svg>
           <h3 className="text-sm font-bold text-text-secondary uppercase tracking-wider">
@@ -78,8 +78,8 @@ function ClinicalInsights({ insights = [], evidenceChains = [], graphRisks = [],
                 <div className="px-4 pb-4 space-y-3 border-t border-border-subtle pt-3 fade-in">
                   {/* Reasoning */}
                   {insight.reasoning && (
-                    <div className="px-3 py-2.5 rounded-lg bg-accent-purple/5 border border-accent-purple/15">
-                      <p className="text-[0.6rem] text-accent-purple/80 font-bold uppercase tracking-wider mb-1">Clinical Reasoning</p>
+                    <div className="px-3 py-2.5 rounded-lg bg-accent-green/5 border border-accent-green/15">
+                      <p className="text-[0.6rem] text-accent-green/80 font-bold uppercase tracking-wider mb-1">Clinical Reasoning</p>
                       <p className="text-sm text-text-secondary leading-relaxed">{insight.reasoning}</p>
                     </div>
                   )}
@@ -90,7 +90,7 @@ function ClinicalInsights({ insights = [], evidenceChains = [], graphRisks = [],
                       <p className="text-[0.6rem] text-text-muted font-bold uppercase tracking-wider mb-2">Supporting Evidence</p>
                       <div className="space-y-1.5">
                         {insight.evidence.map((ev, j) => (
-                          <div key={j} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/[0.02] text-xs">
+                          <div key={j} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-accent-green/[0.03] text-xs">
                             <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${conf.dot}`} />
                             <span className="text-text-secondary">{ev.test}:</span>
                             <span className="text-text-primary font-semibold tabular-nums">{ev.value}</span>
@@ -105,11 +105,11 @@ function ClinicalInsights({ insights = [], evidenceChains = [], graphRisks = [],
                   {chain?.evidence_items?.length > 0 && (
                     <div>
                       <p className="text-[0.6rem] text-text-muted font-bold uppercase tracking-wider mb-2">Evidence Chain</p>
-                      <div className="relative pl-4 border-l-2 border-accent-blue/20 space-y-2">
+                      <div className="relative pl-4 border-l-2 border-accent-green/20 space-y-2">
                         {chain.evidence_items.map((ev, j) => (
                           <div key={j} className="relative">
                             <div className="absolute -left-[21px] top-2 w-2.5 h-2.5 rounded-full bg-accent-blue/30 border-2 border-bg-primary" />
-                            <div className="px-3 py-2 rounded-lg bg-white/[0.02] text-xs">
+                            <div className="px-3 py-2 rounded-lg bg-accent-green/[0.03] text-xs">
                               <span className="text-text-primary font-medium">{ev.test_name}:</span>
                               <span className="text-text-secondary ml-1">{ev.observed_value} {ev.unit}</span>
                               {ev.reference_range && <span className="text-text-muted ml-1">(ref: {ev.reference_range})</span>}

@@ -6,7 +6,7 @@ function Footer() {
       {/* Subtle gradient backdrop */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute bottom-0 left-1/4 w-96 h-96 rounded-full bg-accent-blue/[0.02] blur-[100px]" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-accent-purple/[0.02] blur-[100px]" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-accent-green/[0.02] blur-[100px]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-10 relative">
@@ -14,14 +14,14 @@ function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-blue/15 to-accent-purple/15 border border-accent-blue/15 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-green/15 to-emerald-300/15 border border-accent-green/15 flex items-center justify-center">
                 <svg className="w-4 h-4" viewBox="0 0 32 32" fill="none">
                   <circle cx="16" cy="16" r="14" stroke="url(#gf)" strokeWidth="2.5"/>
                   <path d="M16 8v16M12 12h8M12 20h8" stroke="url(#gf)" strokeWidth="2" strokeLinecap="round"/>
-                  <defs><linearGradient id="gf" x1="0" y1="0" x2="32" y2="32"><stop stopColor="#38bdf8"/><stop offset="1" stopColor="#a78bfa"/></linearGradient></defs>
+                  <defs><linearGradient id="gf" x1="0" y1="0" x2="32" y2="32"><stop stopColor="#10b981"/><stop offset="1" stopColor="#6ee7b7"/></linearGradient></defs>
                 </svg>
               </div>
-              <span className="font-bold bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">MedBios AI</span>
+              <span className="font-bold bg-gradient-to-r from-accent-green to-emerald-300 bg-clip-text text-transparent">MedBios AI</span>
             </div>
             <p className="text-text-muted text-xs leading-relaxed max-w-xs">
               AI-powered clinical intelligence platform. Analyze medical reports with explainable reasoning, knowledge graphs, and personalized health insights.
@@ -47,7 +47,7 @@ function Footer() {
                 { to: '/settings', label: 'Settings' },
               ].map(link => (
                 <li key={link.to}>
-                  <Link to={link.to} className="text-text-muted text-sm hover:text-accent-blue transition inline-flex items-center gap-1.5 group">
+                  <Link to={link.to} className="text-text-muted text-sm hover:text-accent-green transition inline-flex items-center gap-1.5 group">
                     <svg className="w-3 h-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                     </svg>
@@ -64,7 +64,7 @@ function Footer() {
             <div className="space-y-2.5">
               {[
                 { label: '100+ Lab Test References', color: 'bg-accent-blue' },
-                { label: '25+ Clinical Reasoning Rules', color: 'bg-accent-purple' },
+                { label: '25+ Clinical Reasoning Rules', color: 'bg-accent-green' },
                 { label: '30+ Drug Interaction Pairs', color: 'bg-accent-orange' },
                 { label: 'Medical Knowledge Graph', color: 'bg-accent-teal' },
                 { label: 'Personalized Recommendations', color: 'bg-accent-green' },
@@ -84,7 +84,7 @@ function Footer() {
           </p>
           <div className="flex items-center gap-3">
             {['FastAPI', 'React', 'Tailwind', 'SQLAlchemy'].map((tech, i) => (
-              <span key={i} className="px-2 py-0.5 rounded-md bg-bg-elevated/50 border border-border-subtle text-text-muted text-[0.6rem] font-medium">
+              <span key={i} className="px-2 py-0.5 rounded-md bg-accent-green/[0.04] border border-border-subtle text-text-muted text-[0.6rem] font-medium">
                 {tech}
               </span>
             ))}

@@ -59,7 +59,7 @@ function HealthScoreRing({ score = 0, size = 220, showBreakdown = true }) {
         <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
           <defs>
             <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#0ea5e9" />
+              <stop offset="0%" stopColor="#10b981" />
               <stop offset="50%" stopColor={risk.color} />
               <stop offset="100%" stopColor={risk.color} />
             </linearGradient>

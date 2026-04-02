@@ -41,11 +41,11 @@ function PatientSummaryCard({ patientInfo = {}, labValues = [], riskScores = {},
   const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 
   const metrics = [
-    { value: labValues.length, label: 'Total Tests', color: 'text-accent-blue', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+    { value: labValues.length, label: 'Total Tests', color: 'text-accent-green', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
     { value: normalCount, label: 'Normal', color: 'text-accent-green', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
     { value: abnormalCount, label: 'Abnormal', color: 'text-accent-orange', icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' },
     { value: criticalCount, label: 'Critical', color: 'text-accent-red', icon: 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-    { value: highConfInsights, label: 'AI Alerts', color: 'text-accent-purple', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
+    { value: highConfInsights, label: 'AI Alerts', color: 'text-accent-green', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
     { value: Object.keys(riskScores.organ_systems || riskScores.by_system || {}).length, label: 'Systems', color: 'text-cyan-400', icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
   ];
 
@@ -58,7 +58,7 @@ function PatientSummaryCard({ patientInfo = {}, labValues = [], riskScores = {},
       {/* Top Section: Patient + Risk */}
       <div className="flex items-start gap-4 relative">
         {/* Avatar */}
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center text-white font-bold text-lg shrink-0 shadow-lg shadow-accent-blue/20 ring-2 ring-accent-blue/20">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-green to-emerald-300 flex items-center justify-center text-white font-bold text-lg shrink-0 shadow-lg shadow-accent-green/20 ring-2 ring-accent-blue/20">
           {initials}
         </div>
 
@@ -102,7 +102,7 @@ function PatientSummaryCard({ patientInfo = {}, labValues = [], riskScores = {},
         {metrics.map((m, i) => (
           <div key={i} className="text-center group cursor-default">
             <div className="flex justify-center mb-1.5">
-              <div className="w-7 h-7 rounded-lg bg-white/[0.03] border border-border-subtle flex items-center justify-center group-hover:bg-white/[0.06] transition">
+              <div className="w-7 h-7 rounded-lg bg-accent-green/[0.03] border border-border-subtle flex items-center justify-center group-hover:bg-white/[0.06] transition">
                 <svg className={`w-3.5 h-3.5 ${m.color}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d={m.icon} />
                 </svg>
@@ -119,7 +119,7 @@ function PatientSummaryCard({ patientInfo = {}, labValues = [], riskScores = {},
       {/* Mini progress bar showing normal vs abnormal ratio */}
       {labValues.length > 0 && (
         <div className="mt-3 flex items-center gap-2">
-          <div className="flex-1 h-1.5 rounded-full bg-white/5 overflow-hidden flex">
+          <div className="flex-1 h-1.5 rounded-full bg-accent-green/5 overflow-hidden flex">
             <div className="h-full bg-accent-green rounded-l-full transition-all duration-700" style={{ width: `${(normalCount / labValues.length) * 100}%` }} />
             <div className="h-full bg-accent-orange transition-all duration-700" style={{ width: `${((abnormalCount - criticalCount) / labValues.length) * 100}%` }} />
             <div className="h-full bg-accent-red rounded-r-full transition-all duration-700" style={{ width: `${(criticalCount / labValues.length) * 100}%` }} />

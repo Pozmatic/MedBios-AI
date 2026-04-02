@@ -6,10 +6,10 @@ import {
 const SYSTEM_COLORS = {
   Cardiovascular: '#f97316',
   Hematological: '#ef4444',
-  Renal: '#0ea5e9',
+  Renal: '#10b981',
   Hepatic: '#14b8a6',
   Endocrine: '#22c55e',
-  Electrolytes: '#8b5cf6',
+  Electrolytes: '#34d399',
   Gastrointestinal: '#ec4899',
   Respiratory: '#eab308',
 };
@@ -72,11 +72,11 @@ function SystemRadarChart({ riskScores = {} }) {
           <Radar
             name="Risk Score"
             dataKey="score"
-            stroke="#0ea5e9"
-            fill="#0ea5e9"
+            stroke="#10b981"
+            fill="#10b981"
             fillOpacity={0.15}
             strokeWidth={2}
-            dot={{ fill: '#0ea5e9', r: 3 }}
+            dot={{ fill: '#10b981', r: 3 }}
           />
           <Tooltip content={<CustomTooltip />} />
         </RadarChart>
