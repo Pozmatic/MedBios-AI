@@ -93,10 +93,19 @@ function UploadReport() {
   return (
     <div className="max-w-3xl mx-auto px-6 py-8 page-enter">
       <div className="slide-up mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-accent-blue via-white to-accent-purple bg-clip-text text-transparent">
-          Upload Medical Report
-        </h1>
-        <p className="text-text-secondary mt-1">Upload a PDF lab report for AI-powered clinical analysis</p>
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-blue/15 to-accent-purple/15 border border-accent-blue/15 flex items-center justify-center">
+            <svg className="w-5 h-5 text-accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold med-gradient-text">
+              Upload Medical Report
+            </h1>
+            <p className="text-text-secondary text-sm">Upload a PDF lab report for AI-powered clinical analysis</p>
+          </div>
+        </div>
       </div>
 
       {!uploading ? (
@@ -118,16 +127,16 @@ function UploadReport() {
           >
             {!file ? (
               <>
-                <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-accent-blue/15 to-accent-purple/15 flex items-center justify-center">
+                <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-accent-blue/10 to-accent-purple/10 border border-accent-blue/10 flex items-center justify-center float-anim">
                   <svg className="w-10 h-10 text-accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                   </svg>
                 </div>
-                <p className="text-text-primary font-semibold text-lg mb-1">Drop your PDF here</p>
-                <p className="text-text-muted text-sm mb-3">or click to browse files</p>
+                <p className="text-text-primary font-semibold text-lg mb-1">Drop your lab report here</p>
+                <p className="text-text-muted text-sm mb-4">PDF format supported — up to 50MB</p>
                 <div className="flex flex-wrap justify-center gap-2">
-                  {['Blood Work', 'Metabolic Panel', 'CBC', 'Lipid Profile', 'Thyroid'].map((t, i) => (
-                    <span key={i} className="px-2.5 py-1 rounded-full border border-border-subtle text-text-muted text-xs">{t}</span>
+                  {['Blood Work', 'Metabolic Panel', 'CBC', 'Lipid Profile', 'Thyroid', 'Kidney Function'].map((t, i) => (
+                    <span key={i} className="px-3 py-1 rounded-full bg-bg-elevated/50 border border-border-subtle text-text-muted text-xs font-medium">{t}</span>
                   ))}
                 </div>
               </>
