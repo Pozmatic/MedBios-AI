@@ -11,6 +11,7 @@ import Signup from './pages/Signup';
 import Settings from './pages/Settings';
 import { ToastProvider } from './components/ToastProvider';
 import { AuthProvider, useAuth } from './components/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import Footer from './components/Footer';
 import { useKeyboardShortcuts } from './components/useKeyboardShortcuts';
 import './App.css';
@@ -186,16 +187,18 @@ function AppContent() {
         )}
       </nav>
 
-      <Routes>
-        <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/upload" element={<ProtectedRoute><UploadReport /></ProtectedRoute>} />
-        <Route path="/report/:id" element={<ProtectedRoute><ReportResults /></ProtectedRoute>} />
-        <Route path="/drug-interactions" element={<ProtectedRoute><DrugInteractions /></ProtectedRoute>} />
-        <Route path="/trends/:patientId" element={<ProtectedRoute><TrendAnalysis /></ProtectedRoute>} />
-        <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-        <Route path="/login" element={<Navigate to="/" replace />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/upload" element={<ProtectedRoute><UploadReport /></ProtectedRoute>} />
+          <Route path="/report/:id" element={<ProtectedRoute><ReportResults /></ProtectedRoute>} />
+          <Route path="/drug-interactions" element={<ProtectedRoute><DrugInteractions /></ProtectedRoute>} />
+          <Route path="/trends/:patientId" element={<ProtectedRoute><TrendAnalysis /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/login" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </ErrorBoundary>
       <Footer />
     </div>
   );

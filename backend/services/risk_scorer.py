@@ -7,10 +7,19 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def compute_risk_scores(lab_values: list[dict], insights: list[dict]) -> dict:
+def compute_risk_scores(
+    lab_values: list[dict],
+    insights: list[dict],
+    patient_info: dict | None = None,
+) -> dict:
     """
-    Compute composite risk scores per organ system.
-    
+    Compute composite risk scores per organ system, adjusted for patient demographics.
+
+    Args:
+        lab_values: Extracted lab values with status fields.
+        insights: Clinical insights from the reasoning engine.
+        patient_info: Optional dict with 'age' (int) and 'gender' (str) for risk adjustment.
+
     Returns: {
         "overall": float (0-100),
         "organ_systems": {
@@ -20,6 +29,9 @@ def compute_risk_scores(lab_values: list[dict], insights: list[dict]) -> dict:
     }
     """
     organ_systems = {}
+    patient_info = patient_info or {}
+    age = patient_info.get("age")
+    gender = (patient_info.get("gender") or "").lower()
 
     # Confidence to numeric weight
     conf_weight = {"high": 3.0, "medium": 2.0, "low": 1.0}
@@ -30,6 +42,9 @@ def compute_risk_scores(lab_values: list[dict], insights: list[dict]) -> dict:
         "low": 2.0, "high": 2.0,
         "normal": 0.0,
     }
+
+    # Age/gender-based risk multipliers per organ system
+    age_risk_multipliers = _get_age_risk_multipliers(age, gender)
 
     # ── Compute insight-based scores ──
     category_map = {
@@ -74,14 +89,18 @@ def compute_risk_scores(lab_values: list[dict], insights: list[dict]) -> dict:
             organ_systems[system]["raw_score"] += sw * 0.5
             organ_systems[system]["max_possible"] += 2.0
 
-    # ── Normalize scores to 0-100 ──
+    # ── Normalize scores to 0-100, apply age/gender adjustments ──
     result = {}
     total_score = 0
-    total_max = 0
 
     for system, data in organ_systems.items():
         max_p = max(data["max_possible"], 1)
         score = min((data["raw_score"] / max_p) * 100, 100)
+
+        # Apply age/gender risk multiplier
+        multiplier = age_risk_multipliers.get(system, 1.0)
+        score = min(score * multiplier, 100)
+
         level = _score_to_level(score)
         result[system] = {
             "score": round(score, 1),
@@ -89,7 +108,6 @@ def compute_risk_scores(lab_values: list[dict], insights: list[dict]) -> dict:
             "factors": data["factors"],
         }
         total_score += score
-        total_max += 100
 
     overall = round(total_score / max(len(organ_systems), 1), 1)
 
@@ -98,6 +116,35 @@ def compute_risk_scores(lab_values: list[dict], insights: list[dict]) -> dict:
         "overall_level": _score_to_level(overall),
         "organ_systems": result,
     }
+
+
+def _get_age_risk_multipliers(age: int | None, gender: str) -> dict[str, float]:
+    """Return per-organ-system risk multipliers based on patient age and gender."""
+    multipliers: dict[str, float] = {}
+    if age is None:
+        return multipliers
+
+    # Older patients have elevated cardiovascular and renal risk
+    if age >= 65:
+        multipliers["cardiovascular"] = 1.3
+        multipliers["renal"] = 1.25
+        multipliers["metabolic"] = 1.15
+    elif age >= 50:
+        multipliers["cardiovascular"] = 1.15
+        multipliers["renal"] = 1.1
+
+    # Gender-specific adjustments
+    if gender in ("male", "m"):
+        multipliers.setdefault("cardiovascular", 1.0)
+        multipliers["cardiovascular"] = min(multipliers["cardiovascular"] * 1.1, 1.5)
+        if age and age >= 50:
+            multipliers["urological"] = 1.2
+    elif gender in ("female", "f"):
+        multipliers["hematological"] = multipliers.get("hematological", 1.0) * 1.1  # higher anemia prevalence
+        if age and age >= 50:
+            multipliers["nutritional"] = 1.15  # bone density / vitamin D
+
+    return multipliers
 
 
 def _lab_to_system(canonical_name: str) -> str | None:

@@ -1,0 +1,78 @@
+[
+  {
+    "name": "Subclinical Hypothyroidism",
+    "conditions": [
+      {"test": "tsh", "operator": ">", "value": 4.5}
+    ],
+    "optional_conditions": [
+      {"test": "free_t4", "operator": "<", "value": 0.8}
+    ],
+    "condition_label": "Subclinical Hypothyroidism",
+    "category": "Endocrinology",
+    "base_confidence": "medium",
+    "upgraded_confidence": "high",
+    "reasoning": "Elevated TSH with potentially low Free T4 suggests underactive thyroid function. Subclinical hypothyroidism may progress to overt hypothyroidism.",
+    "recommendation": "Full thyroid panel (Free T4, Free T3, anti-TPO). Repeat TSH in 6-8 weeks if borderline."
+  },
+  {
+    "name": "Hyperuricemia / Gout Risk",
+    "conditions": [
+      {"test": "uric_acid", "operator": ">", "value": 7.0}
+    ],
+    "optional_conditions": [
+      {"test": "creatinine", "operator": ">", "value": 1.3}
+    ],
+    "condition_label": "Hyperuricemia (Gout Risk)",
+    "category": "Rheumatology",
+    "base_confidence": "medium",
+    "upgraded_confidence": "high",
+    "reasoning": "Elevated uric acid increases risk of gout and urate nephropathy. Co-existing renal impairment may reduce uric acid excretion.",
+    "recommendation": "Dietary purine restriction, hydration. Consider 24-hour urine uric acid if recurrent. Evaluate for allopurinol therapy."
+  },
+  {
+    "name": "Pre-diabetes Detection",
+    "conditions": [
+      {"test": "hba1c", "operator": ">=", "value": 5.7}
+    ],
+    "optional_conditions": [
+      {"test": "fasting_glucose", "operator": ">=", "value": 100}
+    ],
+    "condition_label": "Pre-diabetes (Impaired Glucose Tolerance)",
+    "category": "Endocrinology",
+    "base_confidence": "medium",
+    "upgraded_confidence": "high",
+    "reasoning": "HbA1c in the 5.7-6.4% range indicates pre-diabetes. Combined with impaired fasting glucose, risk of progression to type 2 diabetes is significant.",
+    "recommendation": "Lifestyle modification: weight management, 150 min/week moderate exercise, reduced refined carbohydrates. Repeat HbA1c in 3-6 months."
+  },
+  {
+    "name": "Iron Overload Screening",
+    "conditions": [
+      {"test": "ferritin", "operator": ">", "value": 300}
+    ],
+    "optional_conditions": [
+      {"test": "transferrin_saturation", "operator": ">", "value": 45}
+    ],
+    "condition_label": "Possible Iron Overload (Hemochromatosis Screening)",
+    "category": "Hematology",
+    "base_confidence": "low",
+    "upgraded_confidence": "high",
+    "reasoning": "Markedly elevated ferritin with high transferrin saturation raises concern for hereditary hemochromatosis or secondary iron overload.",
+    "recommendation": "HFE gene testing, liver iron assessment (MRI), consider hepatology referral."
+  },
+  {
+    "name": "Severe Vitamin D Deficiency",
+    "conditions": [
+      {"test": "vitamin_d", "operator": "<", "value": 20}
+    ],
+    "optional_conditions": [
+      {"test": "calcium", "operator": "<", "value": 8.5},
+      {"test": "pth", "operator": ">", "value": 65}
+    ],
+    "condition_label": "Severe Vitamin D Deficiency",
+    "category": "Nutrition",
+    "base_confidence": "medium",
+    "upgraded_confidence": "high",
+    "reasoning": "Vitamin D < 20 ng/mL indicates deficiency. Concurrent low calcium or elevated PTH suggests secondary hyperparathyroidism from vitamin D deficiency.",
+    "recommendation": "High-dose vitamin D3 supplementation (50,000 IU weekly x 8 weeks), then maintenance 1000-2000 IU daily. Recheck in 3 months."
+  }
+]
