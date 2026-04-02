@@ -43,6 +43,12 @@ async def upload_report(
             detail=f"Unsupported file type: {file.content_type}. Please upload a PDF or image file."
         )
 
+    # Sanitize filename
+    import re as _re
+    safe_filename = _re.sub(r'[^\w\s\-\.]', '', file.filename or "report.pdf").strip()
+    if not safe_filename:
+        safe_filename = "report.pdf"
+
     # Read file
     file_bytes = await file.read()
     if len(file_bytes) == 0:
@@ -52,7 +58,7 @@ async def upload_report(
 
     # Run analysis pipeline
     try:
-        result = await run_full_pipeline_async(file_bytes, filename=file.filename)
+        result = await run_full_pipeline_async(file_bytes, filename=safe_filename)
     except Exception as e:
         logger.error(f"Pipeline failed: {e}")
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
@@ -62,20 +68,31 @@ async def upload_report(
 
     # ── Persist to database ──
     try:
-        # Create or find patient
+        # Deduplicate patient: find existing by name+age+gender or create new
         patient_info = result.get("patient_info", {})
-        patient = Patient(
-            name=patient_info.get("name"),
-            age=patient_info.get("age"),
-            gender=patient_info.get("gender"),
-        )
-        db.add(patient)
-        await db.flush()
+        p_name = patient_info.get("name")
+        p_age = patient_info.get("age")
+        p_gender = patient_info.get("gender")
+
+        patient = None
+        if p_name and p_age:
+            query = select(Patient).where(
+                Patient.name == p_name,
+                Patient.age == p_age,
+            )
+            if p_gender:
+                query = query.where(Patient.gender == p_gender)
+            patient = (await db.execute(query)).scalar_one_or_none()
+
+        if not patient:
+            patient = Patient(name=p_name, age=p_age, gender=p_gender)
+            db.add(patient)
+            await db.flush()
 
         # Create report
         report = Report(
             patient_id=patient.id,
-            filename=file.filename,
+            filename=safe_filename,
             document_type=result.get("document_type", "unknown"),
             raw_text=result.get("raw_text", ""),
             status="completed",
@@ -574,10 +591,11 @@ async def export_report_pdf(report_id: str, db: AsyncSession = Depends(get_db)):
 
 import asyncio
 from schemas import ChatMessage
+from services.llm_chat import llm_chat, is_llm_available
 
 @router.post("/{report_id}/chat")
 async def chat_with_report(report_id: str, payload: ChatMessage, db: AsyncSession = Depends(get_db)):
-    """Context-aware AI chat that uses actual report data to answer questions."""
+    """Context-aware AI chat — uses LLM when available, falls back to keyword matching."""
     report_result = await db.execute(select(Report).where(Report.id == report_id))
     report = report_result.scalars().first()
     if not report:
@@ -587,22 +605,52 @@ async def chat_with_report(report_id: str, payload: ChatMessage, db: AsyncSessio
     lab_results = (await db.execute(
         select(LabResult).where(LabResult.report_id == report_id)
     )).scalars().all()
-    insights = (await db.execute(
+    insights_db = (await db.execute(
         select(ClinicalInsight).where(ClinicalInsight.report_id == report_id)
     )).scalars().all()
 
-    msg = payload.message.lower()
-    clinical_report = report.analysis_result or {}
+    # Get patient info
+    patient = None
+    if report.patient_id:
+        patient = (await db.execute(
+            select(Patient).where(Patient.id == report.patient_id)
+        )).scalar_one_or_none()
 
-    # Build context from actual data
-    abnormal_labs = [lr for lr in lab_results if lr.status != "normal"]
-    abnormal_names = {lr.test_name.lower() for lr in abnormal_labs}
-    insight_conditions = [ins.condition for ins in insights]
+    clinical_report = report.analysis_result or {}
     risk_scores = clinical_report.get("risk_scores", {})
 
-    answer = _build_chat_response(msg, abnormal_labs, insights, risk_scores, insight_conditions)
+    # Build context dicts for both LLM and fallback
+    lab_dicts = [{"test_name": lr.test_name, "value": lr.value, "unit": lr.unit, "status": lr.status}
+                 for lr in lab_results]
+    insight_dicts = [{"condition": ins.condition, "confidence": ins.confidence,
+                      "reasoning": ins.reasoning, "category": ins.category}
+                     for ins in insights_db]
+    patient_info = {"name": patient.name if patient else None,
+                    "age": patient.age if patient else None,
+                    "gender": patient.gender if patient else None}
 
-    return {"answer": answer}
+    # Try LLM first
+    llm_response = None
+    if is_llm_available():
+        llm_response = await llm_chat(
+            message=payload.message,
+            context={
+                "lab_values": lab_dicts,
+                "insights": insight_dicts,
+                "risk_scores": risk_scores,
+                "patient_info": patient_info,
+            },
+        )
+
+    if llm_response:
+        return {"answer": llm_response, "source": "llm"}
+
+    # Fallback to keyword-based
+    msg = payload.message.lower()
+    abnormal_labs = [lr for lr in lab_results if lr.status != "normal"]
+    insight_conditions = [ins.condition for ins in insights_db]
+    answer = _build_chat_response(msg, abnormal_labs, insights_db, risk_scores, insight_conditions)
+    return {"answer": answer, "source": "rules"}
 
 
 def _build_chat_response(msg, abnormal_labs, insights, risk_scores, conditions):

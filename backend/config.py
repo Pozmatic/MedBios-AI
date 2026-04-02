@@ -29,5 +29,13 @@ TESSERACT_CMD = os.getenv("TESSERACT_CMD", r"C:\Program Files\Tesseract-OCR\tess
 
 # App
 APP_NAME = "MedBios AI"
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.1.0"
 DEBUG = os.getenv("DEBUG", "true").lower() == "true"
+
+# Auth
+SECRET_KEY = os.getenv("SECRET_KEY", "medbios-dev-secret-change-in-production")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))  # 24h
+
+# LLM
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
+LLM_MODEL = os.getenv("LLM_MODEL", "gemini-2.0-flash")
